@@ -1,10 +1,10 @@
 import { createBrowserRouter } from "react-router-dom"
-import Layout from "@/pages/Layout"
+import La from "@/pages/La"
 
 const router = createBrowserRouter([
     {
         path: '/',
-        element: <Layout />,
+        element: <La />,
     },
 ])
 

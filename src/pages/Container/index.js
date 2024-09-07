@@ -100,19 +100,19 @@ function Container() {
                                                 style: { fontSize: '12px' }
                                             },
                                             {
-                                                key: 'todo?listName=星标',
+                                                key: 'todo/星标',
                                                 // icon: <UploadOutlined />,
                                                 label: '星标',
                                                 style: { fontSize: '12px' }
                                             },
                                             {
-                                                key: 'todo?listName=已完成',
+                                                key: 'todo/已完成',
                                                 // icon: <UploadOutlined />,
                                                 label: '已完成',
                                                 style: { fontSize: '12px' }
                                             },
                                             {
-                                                key: 'todo?listName=回收站',
+                                                key: 'todo/回收站',
                                                 // icon: <UploadOutlined />,
                                                 label: '回收站',
                                                 style: { fontSize: '12px' }

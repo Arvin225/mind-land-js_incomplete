@@ -25,12 +25,10 @@ const { setCustomToDoList } = customToDoListStore.actions
 const fetchCustomToDoList = () => {
     return async (dispatch) => {
         const res = await getCustomToDoListAPI()
-        console.log(res);
-
         dispatch(setCustomToDoList(res.data.map(item => ({
-            key: `todo?listName=${item}`,
+            key: `todo/${item.listName}`,
             // icon: <UploadOutlined />,
-            label: item,
+            label: item.listName,
             style: { fontSize: '12px' }
         }))))
     }

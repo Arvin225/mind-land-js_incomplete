@@ -1,8 +1,16 @@
 {
     "customToDoList": [
-        "执行",
-        "代购",
-        "项目",
-        "备忘"
+        {
+            "listName": "执行"
+        },
+        {
+            "listName": "代购"
+        },
+        {
+            "listName": "项目"
+        },
+        {
+            "listName": "备忘"
+        }
     ]
 }

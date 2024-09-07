@@ -1,13 +1,13 @@
-import { useSearchParams } from "react-router-dom"
+import { useParams } from "react-router-dom"
 
 function ToDo() {
-    const [params] = useSearchParams()
+    const params = useParams()
 
-    const listName = params.get('listName')
+    const listName = params.listName
 
 
 
-    if (listName === '全部') {
+    if (!listName) {
         // 展示 列表名 在todo项上
     } else {
         // 不展示列表名

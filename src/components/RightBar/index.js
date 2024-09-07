@@ -1,4 +1,4 @@
-function RightBar() {
+function RightBar(data, style) {
 
 }
 

@@ -18,3 +18,5 @@ function ToDoDetail() {
         </>
     )
 }
+
+export default ToDoDetail

@@ -1,8 +1,7 @@
 function SlipBox() {
-    return (
-        <>
 
-        </>
+    return (
+        <div>This is SlipBox page</div>
     )
 }
 

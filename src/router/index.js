@@ -13,17 +13,6 @@ const MarkList = lazy(() => import("@/pages/MarkList"))
 const Diary = lazy(() => import("@/pages/Diary"))
 const Note = lazy(() => import("@/pages/Note"))
 
-/* import AI from "@/pages/AI"
-import Home from "@/pages/Home"
-import ToDo from "@/pages/ToDo"
-import Draft from "@/pages/Draft"
-import MindMap from "@/pages/MindMap"
-import SlipBox from "@/pages/SlipBox"
-import MarkList from "@/pages/MarkList"
-import Diary from "@/pages/Diary"
-import Note from "@/pages/Note" */
-
-
 const router = createBrowserRouter([
     {
         path: '/',
@@ -35,11 +24,14 @@ const router = createBrowserRouter([
             },
             {
                 index: true,
-                path: "/",
                 element: (<Suspense fallback={'加载中'}><Home /></Suspense>)
             },
             {
-                path: "/todo",
+                path: "/home",
+                element: (<Suspense fallback={'加载中'}><Home /></Suspense>)
+            },
+            {
+                path: "/todo/:listName?",
                 element: (<Suspense fallback={'加载中'}><ToDo /></Suspense>)
             },
             {

@@ -24,7 +24,7 @@ import { Button, Layout, Menu, theme } from 'antd';
 import { Outlet, useNavigate } from 'react-router-dom';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchCustomToDoList } from '@/store/modules/customToDoListStore';
+import { fetchToDoListNames } from '@/store/modules/toDoListStore';
 
 const { Header, Sider, Content } = Layout;
 
@@ -39,19 +39,19 @@ function Container() {
     // 处理菜单点击后的路由跳转
     const navigate = useNavigate()
     const handleMenuClick = ({ key }) => {
-        if (key === 'home') {
+        /* if (key === 'home') {
             key = ''
-        }
+        } */
         navigate(`/${key}`)
     }
 
     const dispatch = useDispatch()
-    // 获取ToDo的自定义列表
-    const { customToDoList } = useSelector(state => state.customToDoList)
     // 异步请求ToDo的自定义列表
     useEffect(() => {
-        dispatch(fetchCustomToDoList())
+        dispatch(fetchToDoListNames())
     }, [dispatch])
+    // 获取ToDo的自定义列表
+    const { toDoListNames } = useSelector(state => state.toDoList)
 
     return (
         <>
@@ -118,7 +118,7 @@ function Container() {
                                                 style: { fontSize: '12px' }
                                             },
                                             { type: 'divider' },
-                                            ...customToDoList,
+                                            ...toDoListNames,
                                             {
                                                 key: '新建列表',
                                                 disabled: true,

@@ -1,5 +1,5 @@
 import request from "@/utils/request";
 
-export function getCustomToDoListAPI() {
-    return request.get('http://localhost:3300/customToDoList')
+export function getToDoListNamesAPI() {
+    return request.get('/toDoListNames') //得到的是一个promise对象，后续可以进行then和catch
 }

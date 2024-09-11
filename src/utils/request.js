@@ -6,9 +6,51 @@ const request = axios.create({
     timeout: 5000,
 })
 
+
+const CancelToken = axios.CancelToken
+let requestQueue = []
+// 请求拦截调用：重复请求时取消当前请求
+function handleRequest({ config }) {
+    // 提取四个参数用于区分相同的请求
+    // const { url, method, data = {}, params = {} } = config;
+    // const jData = JSON.stringify(data), jParams = JSON.stringify(params)
+    const { url, method } = config;
+
+    // 得到和当前请求重复的请求
+    const duplicatedRequestList = requestQueue.filter(item => {
+        // return item.url === url && item.method === method && item.data === jData && item.params === jParams
+        return item.url === url && item.method === method
+    })
+    // 判断是否有重复，有重复则取消当前请求
+    if (duplicatedRequestList.length) {
+        // 这里是重点，实例化CancelToken时，对参数 c 进行立即调用，即可立即取消当前请求
+        config.cancelToken = new CancelToken(c => c(`重复的请求被拦截了: [${method} -> ${url}]`))
+    } else {
+        // 如果不重复，将当前请求添加到队列，以供后续的重复判定
+        requestQueue.push({
+            url,
+            // data: jData,
+            // params: jParams,
+            method,
+        })
+    }
+}
+
+// 响应拦截调用：得到响应，将当前请求从请求队列中移除
+function handleResponse({ config }) {
+    // const { url, method, data = JSON.stringify({}), params = JSON.stringify({}) } = config
+    const { url, method } = config
+    const reqQueue = requestQueue.filter(item => {
+        // return item.url !== url && item.data !== data && item.params !== params
+        return item.url !== url && item.method !== method
+    })
+    requestQueue = reqQueue
+}
+
 // 请求拦截器
 request.interceptors.request.use(
     (config) => {
+        handleRequest({ config })
         return config
     },
     (error) => {
@@ -21,6 +63,7 @@ request.interceptors.response.use(
     (response) => {
         // 2xx 范围内的状态码都会触发该函数。
         // 对响应数据做点什么
+        handleResponse({ config: response.config })
         return response
     },
     (error) => {

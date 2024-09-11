@@ -7,7 +7,7 @@ export function getToDoListNamesAPI() {
 
 // 新增todo-list名称
 export function postToDoListNameAPI(listName) {
-    return request.post('/toDoListNames', { params: { listName } })
+    return request.post('/toDoListNames', { listName })
 }
 
 // 删除todo-list名称
@@ -17,7 +17,7 @@ export function deleteToDoListNameAPI(listName) {
 
 // 修改todo-list名称
 export function patchToDoListNameAPI(listName) {
-    return request.patch(`/toDoListNames${listName}`, { params: { listName } })
+    return request.patch(`/toDoListNames${listName}`, { listName })
 }
 
 /* 
@@ -28,6 +28,6 @@ export function deleteToDoListNameAPI(id) {
 
 // 修改todo-list名称
 export function patchToDoListNameAPI(id, listName) {
-    return request.patch(`/toDoListNames${id}`, { params: { listName } })
+    return request.patch(`/toDoListNames${id}`, { listName } )
 } 
 */

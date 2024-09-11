@@ -21,24 +21,18 @@
     {
       "id": "1",
       "content": "执行列表里的待办1",
-      "done": false,
+      "done": true,
       "star": false,
       "del": false,
-      "list": "执行",
-      "params": {
-        "star": false
-      }
+      "list": "执行"
     },
     {
       "id": "2",
       "content": "备忘列表里的待办1",
       "done": false,
-      "star": false,
+      "star": true,
       "del": false,
-      "list": "备忘",
-      "params": {
-        "star": false
-      }
+      "list": "备忘"
     },
     {
       "id": "3",
@@ -46,10 +40,7 @@
       "done": false,
       "star": false,
       "del": false,
-      "list": "执行",
-      "params": {
-        "star": false
-      }
+      "list": "执行"
     },
     {
       "id": "4",
@@ -57,10 +48,7 @@
       "done": false,
       "star": false,
       "del": false,
-      "list": "待购",
-      "params": {
-        "star": false
-      }
+      "list": "待购"
     },
     {
       "id": "5",
@@ -68,10 +56,7 @@
       "done": false,
       "star": false,
       "del": false,
-      "list": "待购",
-      "params": {
-        "star": false
-      }
+      "list": "待购"
     },
     {
       "id": "6",
@@ -79,10 +64,7 @@
       "done": false,
       "star": false,
       "del": false,
-      "list": "项目",
-      "params": {
-        "star": false
-      }
+      "list": "项目"
     }
   ]
 }

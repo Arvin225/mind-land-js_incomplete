@@ -1,5 +1,5 @@
 import { getToDoListNamesAPI } from "@/apis/layout";
-import { getToDoListAPI } from "@/apis/toDo";
+import { getToDoListAPI, postToDoItemAPI } from "@/apis/toDo";
 
 import { createSlice } from "@reduxjs/toolkit";
 
@@ -43,7 +43,7 @@ const fetchToDoListNames = () => {
 }
 
 // 获取todo列表
-const fetchToDoList = (listName) => {
+const fetchGetToDoList = (listName) => {
     return async (dispatch) => {
         let res
         switch (listName) {
@@ -68,7 +68,7 @@ const fetchToDoList = (listName) => {
 
 /* ------------------------------------------------导出------------------------------------------------ */
 // 按需导出actionCreater
-export { setToDoListNames, fetchToDoListNames, setToDoList, fetchToDoList }
+export { setToDoListNames, fetchToDoListNames, setToDoList, fetchGetToDoList }
 
 // 默认导出reducer
 export default toDoListStore.reducer

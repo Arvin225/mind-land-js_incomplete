@@ -2,13 +2,13 @@ import request from "@/utils/request";
 
 // 获取toDo列表
 export function getToDoListAPI({ list, star, done, del = false }) {
-    return request.get('/toDoList', { list, star, done, del })
+    return request.get('/toDoList', { params: { list, star, done, del } })
 }
 
 
 // 新增toDo项
-export function postToDoItemAPI({ content, done, star, del, list }) {
-    return request.post('/toDoList', { content, list, star, done, del })
+export function postToDoItemAPI({ content, done = false, star = false, del = false, list }) {
+    return request.post('/toDoList', { content, done, star, del, list })
 }
 
 // 删除toDo项

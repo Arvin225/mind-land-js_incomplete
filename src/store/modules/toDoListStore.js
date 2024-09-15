@@ -1,5 +1,6 @@
 import { getToDoListNamesAPI } from "@/apis/layout";
 import { getToDoListAPI, postToDoItemAPI } from "@/apis/toDo";
+import ListName from "@/pages/ToDo/components/ListName/listName";
 
 import { createSlice } from "@reduxjs/toolkit";
 
@@ -33,12 +34,7 @@ const { setToDoListNames, setToDoList } = toDoListStore.actions
 const fetchToDoListNames = () => {
     return async (dispatch) => {
         const res = await getToDoListNamesAPI()
-        dispatch(setToDoListNames(res.data.map(item => ({
-            key: `todo/${item.listName}`,
-            // icon: <UploadOutlined />,
-            label: item.listName,
-            style: { fontSize: '12px' }
-        }))))
+        dispatch(setToDoListNames(res.data))
     }
 }
 

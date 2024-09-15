@@ -15,31 +15,31 @@ function ToDo() {
     const listName = params.listName
 
     const dispatch = useDispatch()
+
+    // 获取当前列表数据
+    const { toDoList } = useSelector(state => state.toDoList)
     // 异步请求当前列表数据
     useEffect(() => {
         dispatch(fetchGetToDoList(listName))
     }, [listName])
-    // 获取当前列表数据
-    const { toDoList } = useSelector(state => state.toDoList)
 
-    // 处理新增框回车事件
-    const [disabled, setDisabled] = useState(false)
+    // 新增todo
+    const [inputValue, setInputValue] = useState('')
     const star = (listName === '星标') && true //如果是在星标列表，star为true
-    const list = (listName && listName !== '星标') && listName //如果是在自定义列表中，则设置所属列表
-    const handlePressEnter = (e) => {
-        // 禁用输入框
-        setDisabled(true)
-        // 提交到数据库
-        postToDoItemAPI({ content: e.target.value, star: star, list: list }).then(res => {
-            // 成功，重新请求列表更新store渲染列表，取消禁用输入框
-            dispatch(fetchGetToDoList(listName))
-            // todo 清空输入框
-            setDisabled(false)
-        }).catch(err => {
-            // 失败，提示用户，取消禁用输入框
-            toast.error('操作失败，请稍后再试')
-            setDisabled(false)
-        })
+    const list = (listName && listName !== '星标') ? listName : undefined //如果是在自定义列表中，则设置所属列表
+    const addToDo = () => {
+        if (inputValue.trim()) //非空判断
+            // todo 禁用输入框
+            // 提交到数据库
+            postToDoItemAPI({ content: inputValue, star: star, list: list }).then(res => {
+                // 成功，重新请求列表更新store渲染列表，取消禁用输入框
+                dispatch(fetchGetToDoList(listName))
+                // 清空输入框
+                setInputValue('')
+            }).catch(err => {
+                // 失败，提示用户，取消禁用输入框
+                toast.error('操作失败，请稍后再试')
+            })
     }
 
     return (
@@ -65,7 +65,7 @@ function ToDo() {
                 <Affix offsetTop={830}>
                     <Card type="inner">
                         <PlusOutlined style={{ marginLeft: 6 }} />
-                        <Input placeholder="添加任务" variant="borderless" style={{ marginLeft: 12, minWidth: '50%', maxWidth: '86%' }} onPressEnter={handlePressEnter} disabled={disabled} />
+                        <Input value={inputValue} onChange={e => setInputValue(e.target.value)} placeholder="添加任务" variant="borderless" style={{ marginLeft: 12, minWidth: '50%', maxWidth: '86%' }} onPressEnter={addToDo} />
                     </Card>
                 </Affix>
             </Card>

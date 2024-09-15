@@ -11,13 +11,13 @@ export function postToDoListNameAPI(listName) {
 }
 
 // 删除todo-list名称
-export function deleteToDoListNameAPI(listName) {
-    return request.delete(`/toDoListNames/${listName}`)
+export function deleteToDoListNameAPI(id) {
+    return request.delete(`/toDoListNames/${id}`)
 }
 
 // 修改todo-list名称
-export function patchToDoListNameAPI(listName) {
-    return request.patch(`/toDoListNames${listName}`, { listName })
+export function patchToDoListNameAPI(id, listName) {
+    return request.patch(`/toDoListNames${id}`, { listName })
 }
 
 /* 

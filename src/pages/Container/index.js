@@ -55,8 +55,6 @@ function Container() {
     const [isEditing, setIsEditing] = useState(false)
     const [inputValue, setInputValue] = useState('')
     const addToDoListName = (e) => {
-        console.log(e);
-
         e.stopPropagation() // 阻止事件冒泡，以免触发父级菜单选中事件
         if (inputValue.trim()) {
             // 添加到数据库
@@ -126,7 +124,7 @@ function Container() {
                                         label: '待办',
                                         children: [
                                             {
-                                                key: 'todo',
+                                                key: 'todo/全部',
                                                 // icon: <UploadOutlined />,
                                                 label: '全部',
                                                 style: { fontSize: '12px' }
@@ -152,7 +150,7 @@ function Container() {
                                             { type: 'divider' },
 
                                             ...(toDoListNames.map(item => ({
-                                                key: `todo/${item.listName}`,
+                                                key: `todo/${item.id}`,
                                                 // icon: <UploadOutlined />,
                                                 label: <ListName item={item} />,
                                                 style: { fontSize: '12px' }

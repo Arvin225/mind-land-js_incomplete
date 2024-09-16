@@ -12,7 +12,7 @@ function ToDo() {
 
     const params = useParams()
 
-    const listName = params.listName
+    const list = params.list
 
     const dispatch = useDispatch()
 
@@ -20,20 +20,27 @@ function ToDo() {
     const { toDoList } = useSelector(state => state.toDoList)
     // 异步请求当前列表数据
     useEffect(() => {
-        dispatch(fetchGetToDoList(listName))
-    }, [listName])
+        dispatch(fetchGetToDoList(list))
+    }, [list])
+
+    // 获取列表名
+    const { toDoListNames } = useSelector(state => state.toDoList)
+    // 假设传递的list是listId，查找其列表名，查到了就是在自定义列表，没查到就是在智能列表
+    let listName
+    const findListName = toDoListNames.find(item => item.id === list)
+    findListName && (listName = findListName.listName)
 
     // 新增todo
     const [inputValue, setInputValue] = useState('')
-    const star = (listName === '星标') && true //如果是在星标列表，star为true
-    const list = (listName && listName !== '星标') ? listName : undefined //如果是在自定义列表中，则设置所属列表
+    const star = (!listName && list === '星标') && true //如果是在星标列表，star为true
+    const listId = listName ? list : undefined //如果是在自定义列表中，则设置所属列表
     const addToDo = () => {
         if (inputValue.trim()) //非空判断
             // todo 禁用输入框
             // 提交到数据库
-            postToDoItemAPI({ content: inputValue, star: star, list: list }).then(res => {
+            postToDoItemAPI({ content: inputValue, star: star, listId: listId, listName: listName }).then(res => {
                 // 成功，重新请求列表更新store渲染列表，取消禁用输入框
-                dispatch(fetchGetToDoList(listName))
+                dispatch(fetchGetToDoList(list))
                 // 清空输入框
                 setInputValue('')
             }).catch(err => {
@@ -56,10 +63,10 @@ function ToDo() {
                 theme="colored"
                 transition={Bounce}
             />
-            <Card title={listName ? listName : '全部'} bordered={false}>
+            <Card title={listName ? listName : list} bordered={false}>
                 {/* 渲染to-do项组件 */}
-                {/* 条件渲染：当listName存在时正常渲染，不存在时（在全部中）加上tag属性（给列表名） */}
-                {listName ? toDoList.map(item => <ToDoItem item={item} key={item.id} />) : toDoList.map(item => <ToDoItem item={item} tag={item.list} key={item.id} />)}
+                {/* 条件渲染：在“全部”列表时加上tag属性（给列表名） */}
+                {(!listName && list === '全部') ? toDoList.map(item => <ToDoItem item={item} tag={item.listName} key={item.id} />) : toDoList.map(item => <ToDoItem item={item} key={item.id} />)}
 
                 {/* to-do input表单 */}
                 <Affix offsetTop={830}>

@@ -50,7 +50,7 @@ function handleResponse({ config }) {
 // 请求拦截器
 request.interceptors.request.use(
     (config) => {
-        handleRequest({ config })
+        handleRequest({ config }) // 取消请求后，会向控制台报错，下面的代码便不执行，也就不会发送请求了
         return config
     },
     (error) => {

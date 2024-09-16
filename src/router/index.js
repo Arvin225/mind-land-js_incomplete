@@ -31,7 +31,7 @@ const router = createBrowserRouter([
                 element: (<Suspense fallback={'加载中'}><Home /></Suspense>)
             },
             {
-                path: "/todo/:listName?",
+                path: "/todo/:list",
                 element: (<Suspense fallback={'加载中'}><ToDo /></Suspense>)
             },
             {

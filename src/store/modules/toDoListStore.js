@@ -1,6 +1,5 @@
 import { getToDoListNamesAPI } from "@/apis/layout";
-import { getToDoListAPI, postToDoItemAPI } from "@/apis/toDo";
-import ListName from "@/pages/ToDo/components/ListName/listName";
+import { getToDoListAPI } from "@/apis/toDo";
 
 import { createSlice } from "@reduxjs/toolkit";
 
@@ -39,10 +38,13 @@ const fetchToDoListNames = () => {
 }
 
 // 获取todo列表
-const fetchGetToDoList = (listName) => {
+const fetchGetToDoList = (list) => {
     return async (dispatch) => {
         let res
-        switch (listName) {
+        switch (list) {
+            case '全部':
+                res = await getToDoListAPI({ done: false })
+                break;
             case '星标':
                 res = await getToDoListAPI({ star: true, done: false })
                 break;
@@ -53,7 +55,7 @@ const fetchGetToDoList = (listName) => {
                 res = await getToDoListAPI({ del: true })
                 break;
             default:
-                res = await getToDoListAPI({ list: listName, done: false })
+                res = await getToDoListAPI({ listId: list, done: false })
                 break;
         }
 

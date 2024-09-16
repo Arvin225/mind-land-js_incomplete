@@ -43,29 +43,40 @@ function ListName({ item: { id, listName } }) {
 
     // 删除列表操作
     const deleteList = async () => {
-        // 请求数据库：任务也一块儿删了 // todo 应当后端用事务确保一致性
-        // 先删任务
-        getToDoListAPI({ listId: id }).then(res => {
-            // （获取列表）成功 开始删除
-            // 依次发送修改请求 // todo 将就一下，有后端了后端做
-            const promiseList = []
-            res.data.forEach(item => {
-                promiseList.put(patchToDoItemAPI({ id: item.id, del: true, listId: undefined, listName: undefined }))
-            })
-            Promise.all(promiseList).then(resList => {
-                // 任务都删除成功，删列表
-                deleteToDoListNameAPI(id).then(res => {
-                    // 成功 重新渲染数据
-                    dispatch(fetchToDoListNames())
-                    // todo 如果刚好选中了当前列表，删除后应该选中紧邻的上一个列表（上一个没有就选中紧邻的下一个列表）
-                }).catch(err => {
-                    // 失败 提示用户
-                    toast.error('删除失败，请稍后重试')
-                })
+
+        // 删除列表名操作
+        function deleteListName() {
+            deleteToDoListNameAPI(id).then(res => {
+                // 成功 重新渲染数据
+                dispatch(fetchToDoListNames())
+                // todo 如果刚好选中了当前列表，删除后应该选中紧邻的上一个列表（上一个没有就选中紧邻的下一个列表）
             }).catch(err => {
-                // （删除任务）失败 提示用户
+                // 失败 提示用户
                 toast.error('删除失败，请稍后重试')
             })
+        }
+
+        // 请求数据库：待办也一块儿删了 // todo 应当后端用事务确保一致性
+        // 有待办先删待办
+        getToDoListAPI({ listId: id, done: false }).then(res => {
+            // 有任务先删任务
+            if (res.data.length) {
+                // 依次发送修改请求 // todo 将就一下，有后端了后端做
+                const promiseList = []
+                res.data.forEach(async item => {
+                    promiseList.push(await patchToDoItemAPI({ id: item.id, del: true, listId: '', listName: '' }))
+                })
+                Promise.all(promiseList).then(resList => {
+                    // 任务都删除成功，删列表
+                    deleteListName()
+                }).catch(err => {
+                    // （删除任务）失败 提示用户
+                    toast.error('删除失败，请稍后重试')
+                })
+            } else {
+                // 无待办直接删
+                deleteListName()
+            }
         }).catch(err => {
             // （获取列表）失败 提示用户
             toast.error('删除失败，请稍后重试')

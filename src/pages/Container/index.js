@@ -36,23 +36,23 @@ function Container() {
     // 处理菜单点击后的路由跳转
     const navigate = useNavigate()
     const handleMenuClick = ({ key }) => {
-        /* if (key === 'home') {
-            key = ''
-        } */
+        // if (key === '新建列表') {
+        //     return
+        // }
         navigate(`/${key}`)
     }
 
     const dispatch = useDispatch()
     // 获取ToDo的自定义列表
     const { toDoListNames } = useSelector(state => state.toDoList)
-    // 异步请求ToDo的自定义列表
+    // 异步请求ToDo的自定义列表 // todo 待办菜单展开时再加载
     useEffect(() => {
         dispatch(fetchToDoListNames())
     }, [dispatch])
 
 
     // 新增列表  
-    const [isEditing, setIsEditing] = useState(false)
+    // const [isEditing, setIsEditing] = useState(false)
     const [inputValue, setInputValue] = useState('')
     const addToDoListName = (e) => {
         e.stopPropagation() // 阻止事件冒泡，以免触发父级菜单选中事件
@@ -63,7 +63,7 @@ function Container() {
                 dispatch(fetchToDoListNames())
                 // 清空输入框
                 setInputValue('');
-                setIsEditing(false)
+                // setIsEditing(false)
             }).catch(err => {
                 // 失败 提示用户
                 toast.error('新增失败，请稍后重试')
@@ -157,20 +157,21 @@ function Container() {
                                             }))),
 
                                             {
-                                                key: '新建列表',
-                                                disabled: true,
-                                                label: (
-                                                    isEditing ? (<Input
-                                                        // placeholder="新增列表"
+                                                type: 'group',
+                                                label: (// isEditing ? 
+                                                    (<Input
+                                                        style={{ fontSize: '12px' }}
+                                                        placeholder="新增列表"
                                                         value={inputValue}
                                                         onChange={e => setInputValue(e.target.value)}
-                                                        onBlur={() => { inputValue && setInputValue(''); setIsEditing(false) }}
+                                                        // onBlur={() => { inputValue && setInputValue(''); setIsEditing(false) }}
+                                                        onBlur={() => { inputValue && setInputValue('') }}
+                                                        // onFocus={() => setInputValue('无标题列表')}
                                                         onPressEnter={addToDoListName} // 按下回车键时新增
                                                         variant="borderless"
                                                     />)
-                                                        : (<span onClick={() => setIsEditing(true)}>{'新增列表'}</span>)
+                                                    // : (<span onClick={(e) => { e.stopPropagation(); setIsEditing(true) }}>{'新增列表'}</span>)
                                                 ),
-                                                style: { fontSize: '12px' },
                                             }
                                         ]
                                     },

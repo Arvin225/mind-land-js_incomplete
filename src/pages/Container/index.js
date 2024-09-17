@@ -15,7 +15,7 @@ import {
 } from '@ant-design/icons';
 
 import { Button, Layout, Input, Menu, theme } from 'antd';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchToDoListNames } from '@/store/modules/toDoListStore';
@@ -33,6 +33,8 @@ function Container() {
         token: { colorBgContainer, borderRadiusLG },
     } = theme.useToken();
 
+    const location = useLocation()
+
     // 处理菜单点击后的路由跳转
     const navigate = useNavigate()
     const handleMenuClick = ({ key }) => {
@@ -43,12 +45,16 @@ function Container() {
     }
 
     const dispatch = useDispatch()
-    // 获取ToDo的自定义列表
-    const { toDoListNames } = useSelector(state => state.toDoList)
-    // 异步请求ToDo的自定义列表 // todo 待办菜单展开时再加载
+
+    // 异步请求ToDo的自定义列表
     useEffect(() => {
         dispatch(fetchToDoListNames())
     }, [dispatch])
+
+    // 获取loading
+    const { loadingToDoListNames } = useSelector(state => state.toDoList)
+    // 获取ToDo的自定义列表
+    const { toDoListNames } = useSelector(state => state.toDoList)
 
 
     // 新增列表  
@@ -70,6 +76,10 @@ function Container() {
             })
         }
     };
+
+    if (loadingToDoListNames) {
+        return
+    }
 
     return (
         <>
@@ -102,7 +112,7 @@ function Container() {
                     <Menu
                         theme="light"
                         mode="inline"
-                        defaultSelectedKeys={['home']}
+                        defaultSelectedKeys={[location.pathname === '/' ? 'home' : location.pathname.substring(1)]}
                         onClick={handleMenuClick}
                         items={[
                             {
@@ -124,25 +134,25 @@ function Container() {
                                         label: '待办',
                                         children: [
                                             {
-                                                key: 'todo/全部',
+                                                key: 'todo/all',
                                                 // icon: <UploadOutlined />,
                                                 label: '全部',
                                                 style: { fontSize: '12px' }
                                             },
                                             {
-                                                key: 'todo/星标',
+                                                key: 'todo/star',
                                                 // icon: <UploadOutlined />,
                                                 label: '星标',
                                                 style: { fontSize: '12px' }
                                             },
                                             {
-                                                key: 'todo/已完成',
+                                                key: 'todo/done',
                                                 // icon: <UploadOutlined />,
                                                 label: '已完成',
                                                 style: { fontSize: '12px' }
                                             },
                                             {
-                                                key: 'todo/回收站',
+                                                key: 'todo/bin',
                                                 // icon: <UploadOutlined />,
                                                 label: '回收站',
                                                 style: { fontSize: '12px' }

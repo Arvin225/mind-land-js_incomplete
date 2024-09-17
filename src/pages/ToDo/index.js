@@ -1,7 +1,7 @@
-import { useParams } from "react-router-dom"
+import { redirect, useParams } from "react-router-dom"
 import ToDoItem from "./components/ToDoItem/toDoItem"
 import { useEffect, useState } from "react"
-import { fetchGetToDoList } from "@/store/modules/toDoListStore"
+import { fetchGetToDoList, setLoadingToDoList } from "@/store/modules/toDoListStore"
 import { useDispatch, useSelector } from "react-redux"
 import { Card, Input, Affix } from "antd"
 import { PlusOutlined } from "@ant-design/icons"
@@ -10,30 +10,53 @@ import { Bounce, ToastContainer, toast } from "react-toastify"
 
 function ToDo() {
 
+    const systemListName = [
+        { id: 'all', listName: '全部' },
+        { id: 'star', listName: '星标' },
+        { id: 'done', listName: '已完成' },
+        { id: 'bin', listName: '回收站' },
+    ]
+
     const params = useParams()
 
     const list = params.list
 
     const dispatch = useDispatch()
 
-    // 获取当前列表数据
-    const { toDoList } = useSelector(state => state.toDoList)
     // 异步请求当前列表数据
     useEffect(() => {
-        dispatch(fetchGetToDoList(list))
+        dispatch(setLoadingToDoList(true)) // 路由每次进来都重置下loading
+        dispatch(fetchGetToDoList(list)) // 更新完toDoList后会更新loading
     }, [list])
+    // 获取加载状态
+    const { loading } = useSelector(state => state.toDoList)
+    // 获取当前列表数据
+    const { toDoList } = useSelector(state => state.toDoList)
+
 
     // 获取列表名
     const { toDoListNames } = useSelector(state => state.toDoList)
     // 假设传递的list是listId，查找其列表名，查到了就是在自定义列表，没查到就是在智能列表
-    let listName
+    let listName, sysListName, star, listId
     const findListName = toDoListNames.find(item => item.id === list)
-    findListName && (listName = findListName.listName)
+    if (findListName) {
+        // 自定义列表中
+        listName = findListName.listName
+        listId = list // 如果是在自定义列表中，则设置所属列表
+    } else {
+        const findSystemListName = systemListName.find(item => item.id === list)
+        if (findSystemListName) {
+            // 智能列表中
+            sysListName = findSystemListName.listName
+            sysListName === '星标' && (star = true) // 如果是在星标列表，star为true
+        } else {
+            // 不存在的列表,跳转到404页面
+            redirect('/home')
+        }
+    }
 
     // 新增todo
     const [inputValue, setInputValue] = useState('')
-    const star = (!listName && list === '星标') && true //如果是在星标列表，star为true
-    const listId = listName ? list : undefined //如果是在自定义列表中，则设置所属列表
     const addToDo = () => {
         if (inputValue.trim()) //非空判断
             // todo 禁用输入框
@@ -47,6 +70,10 @@ function ToDo() {
                 // 失败，提示用户，取消禁用输入框
                 toast.error('操作失败，请稍后再试')
             })
+    }
+
+    if (loading) {
+        return <div>加载中...</div>
     }
 
     return (
@@ -63,10 +90,10 @@ function ToDo() {
                 theme="colored"
                 transition={Bounce}
             />
-            <Card title={listName ? listName : list} bordered={false}>
+            <Card title={listName ? listName : sysListName} bordered={false}>
                 {/* 渲染to-do项组件 */}
-                {/* 条件渲染：在“全部”列表时加上tag属性（给列表名） */}
-                {(!listName && list === '全部') ? toDoList.map(item => <ToDoItem item={item} tag={item.listName} key={item.id} />) : toDoList.map(item => <ToDoItem item={item} key={item.id} />)}
+                {/* 条件渲染：在智能列表时加上tag属性（给列表名） */}
+                {sysListName ? toDoList.map(item => <ToDoItem item={item} tag={item.listName} key={item.id} />) : toDoList.map(item => <ToDoItem item={item} key={item.id} />)}
 
                 {/* to-do input表单 */}
                 <Affix offsetTop={830}>

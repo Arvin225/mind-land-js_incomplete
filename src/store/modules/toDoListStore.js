@@ -10,22 +10,31 @@ const toDoListStore = createSlice({
     // 初始化数据
     initialState: {
         toDoListNames: [],
-        toDoList: []
+        loadingToDoListNames: true,
+        toDoList: [],
+        loadingToDoList: true
     },
     // 配置修改方法（同步）
     reducers: {
         setToDoListNames(state, action) {
             state.toDoListNames = action.payload
         },
+        setLoadingToDoListNames(state, action) {
+            state.loadingToDoListNames = action.payload
+        },
+
         setToDoList(state, action) {
             state.toDoList = action.payload
+        },
+        setLoadingToDoList(state, action) {
+            state.loadingToDoList = action.payload
         }
     }
 })
 
 
 /* ------------------------------------------------解构出actionCreater------------------------------------------------ */
-const { setToDoListNames, setToDoList } = toDoListStore.actions
+const { setToDoListNames, setLoadingToDoListNames, setToDoList, setLoadingToDoList } = toDoListStore.actions
 
 
 /* ------------------------------------------------异步方法------------------------------------------------ */
@@ -34,6 +43,8 @@ const fetchToDoListNames = () => {
     return async (dispatch) => {
         const res = await getToDoListNamesAPI()
         dispatch(setToDoListNames(res.data))
+
+        dispatch(setLoadingToDoListNames(false))
     }
 }
 
@@ -42,16 +53,16 @@ const fetchGetToDoList = (list) => {
     return async (dispatch) => {
         let res
         switch (list) {
-            case '全部':
+            case 'all':
                 res = await getToDoListAPI({ done: false })
                 break;
-            case '星标':
+            case 'star':
                 res = await getToDoListAPI({ star: true, done: false })
                 break;
-            case '已完成':
+            case 'done':
                 res = await getToDoListAPI({ done: true })
                 break;
-            case '回收站':
+            case 'bin':
                 res = await getToDoListAPI({ del: true })
                 break;
             default:
@@ -60,13 +71,15 @@ const fetchGetToDoList = (list) => {
         }
 
         dispatch(setToDoList(res.data))
+
+        dispatch(setLoadingToDoList(false))
     }
 }
 
 
 /* ------------------------------------------------导出------------------------------------------------ */
 // 按需导出actionCreater
-export { setToDoListNames, fetchToDoListNames, setToDoList, fetchGetToDoList }
+export { setToDoListNames, fetchToDoListNames, setLoadingToDoListNames, setToDoList, fetchGetToDoList, setLoadingToDoList }
 
 // 默认导出reducer
 export default toDoListStore.reducer

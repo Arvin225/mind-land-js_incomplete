@@ -16,8 +16,8 @@ export function deleteToDoListNameAPI(id) {
 }
 
 // 修改todo-list名称
-export function patchToDoListNameAPI(id, listName) {
-    return request.patch(`/toDoListNames${id}`, { listName })
+export function patchToDoListNameAPI({ id, listName }) {
+    return request.patch(`/toDoListNames/${id}`, { listName })
 }
 
 /* 

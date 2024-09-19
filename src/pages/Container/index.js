@@ -232,7 +232,20 @@ function Container() {
                         ]}
                     />
                 </Sider>
-                <Layout>
+                <Content
+                    style={{
+                        margin: '10px',
+                        minHeight: 280,
+                        background: colorBgContainer,
+                        borderRadius: borderRadiusLG,
+                    }}
+                >
+                    {/* 其他组件路由出口 */}
+                    <Outlet />
+
+                </Content>
+
+                {/* <Layout>
                     <Header
                         style={{
                             padding: 0,
@@ -241,21 +254,9 @@ function Container() {
                     >
 
                     </Header>
-                    <Content
-                        style={{
-                            margin: '24px 16px',
-                            padding: 24,
-                            minHeight: 280,
-                            background: colorBgContainer,
-                            borderRadius: borderRadiusLG,
-                        }}
-                    >
+                    
+                </Layout> */}
 
-                        {/* 其他组件路由出口 */}
-                        <Outlet />
-
-                    </Content>
-                </Layout>
             </Layout>
 
         </>

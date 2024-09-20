@@ -50,8 +50,7 @@ function ToDo() {
             sysListName = findSystemListName.listName
             sysListName === '星标' && (star = true) // 如果是在星标列表，star为true
         } else {
-            // 不存在的列表,跳转到404页面
-            redirect('/home')
+            // todo 不存在的列表,路由到404页面
         }
     }
 

@@ -234,13 +234,14 @@ function Container() {
                 </Sider>
                 <Content
                     style={{
-                        margin: '10px',
+                        // marginLeft: '10px',
+                        // marginRight: '10px',
                         minHeight: 280,
                         background: colorBgContainer,
-                        borderRadius: borderRadiusLG,
+                        // borderRadius: borderRadiusLG,
                     }}
                 >
-                    {/* 其他组件路由出口 */}
+                    {/* 路由出口 */}
                     <Outlet />
 
                 </Content>

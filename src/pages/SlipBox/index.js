@@ -1,5 +1,5 @@
 import { Breadcrumb, Dropdown, Input, Flex, Space, List, Card, Typography, Menu, Tree } from "antd"
-import { DownOutlined } from "@ant-design/icons"
+import { DownOutlined, EllipsisOutlined, MoreOutlined } from "@ant-design/icons"
 import Sider from "antd/es/layout/Sider"
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
@@ -9,7 +9,7 @@ const { Search } = Input
 
 function SlipBox() {
 
-    const cardList = [{
+    const cards = [{
         id: '1',
         content: 'this is a slip',
         builtTime: '2024-09-20 22:15',
@@ -17,14 +17,14 @@ function SlipBox() {
         tagId: '3e5b',
         tagName: 'match/line'
     }, {
-        id: '1',
+        id: '2',
         content: 'this is a slip',
         builtTime: '2024-09-20 22:15',
         statistics: { builtTime: '2024-09-20 22:15', updateTime: '2024-09-20 22:15', words: '11' },
         tagId: '3e5b',
         tagName: 'match/line'
     }, {
-        id: '1',
+        id: '3',
         content: 'this is a slip',
         builtTime: '2024-09-20 22:15',
         statistics: { builtTime: '2024-09-20 22:15', updateTime: '2024-09-20 22:15', words: '11' },
@@ -34,32 +34,71 @@ function SlipBox() {
 
     const treeData = [
         {
-            title: 'Expand to load',
-            key: '0',
+            title: 'tag1',
+            key: '1',
             icon: '#',
             children: [{
-                title: 'tag1',
-                key: '0-0',
-                icon: '#'
+                title: 'tag1-1',
+                key: '1-1',
+                icon: '#',
+                isLeaf: true
             }]
         },
         {
-            title: 'Expand to load',
-            key: '1',
-            icon: '#'
+            title: 'tag2',
+            key: '2',
+            icon: '#',
+            isLeaf: true
         },
         {
-            title: 'Tree Node',
-            key: '2',
+            title: 'tag3',
+            key: '3',
             icon: '#',
             isLeaf: true,
         },
     ];
 
+    const cardMenuItems = [
+        {
+            key: 'edit',
+            label: '编辑'
+        },
+        {
+            key: 'pin',
+            label: '置顶'
+        },
+        { type: 'divider' },
+        {
+            key: 'detail',
+            label: '查看详情'
+        },
+        {
+            key: 'comment',
+            label: '批注'
+        },
+        {
+            key: 'delete',
+            label: '删除'
+        },
+        { type: 'divider' },
+        {
+            key: 'words',
+            label: '字数'
+        },
+        {
+            key: 'b-time',
+            label: '创建时间'
+        },
+        {
+            key: 'u-time',
+            label: '最后编辑'
+        }
+    ];
+
     return (
         <>
-            <Flex horizontal={true} gap={20} justify="center">
-                <Flex vertical={true} style={{ width: '600px', border: '1px solid #40a9ff' }} justify={'flex-start'} align={'center'}>
+            <Flex horizontal={'true'} gap={20} justify="center">
+                <Flex vertical={'true'} style={{ width: '600px', border: '1px solid #40a9ff' }} justify={'flex-start'} align={'center'}>
                     <Flex justify={'space-between'} style={{ width: '100%' }}>
                         <Flex style={{ maxWidth: '60%' }} gap={10} align="center">
                             <Breadcrumb
@@ -123,11 +162,21 @@ function SlipBox() {
                     </Flex>
                     <Flex style={{ width: '100%' }}>
                         <List split={false} style={{ width: '100%' }}>
-                            <VirtualList data={cardList} height={633.2} itemHeight={95.2} itemKey={'id'}>
+                            <VirtualList data={cards} height={633.2} itemHeight={95.2} itemKey={'id'}>
                                 {item => (
-                                    <List.Item>
+                                    <List.Item key={item.id}>
                                         <Card style={{ width: '100%', background: '#38393c' }} bordered={false}>
-                                            <div>{item.builtTime}</div>
+                                            <Flex justify="space-between">
+                                                <div>{item.builtTime}</div>
+                                                <Dropdown
+                                                    menu={{ items: cardMenuItems, onClick: (e) => { } }}
+                                                    placement="bottom"
+                                                    overlayStyle={{ width: 180 }}
+                                                >
+                                                    <EllipsisOutlined />
+                                                </Dropdown>
+                                            </Flex>
+
                                             <div>{item.content}</div>
                                             <div>{'#' + item.tagName}</div>
                                         </Card>
@@ -139,7 +188,12 @@ function SlipBox() {
                 </Flex>
                 <Sider className='tagTree' width={260} style={{ minHeight: '100vh', border: '1px solid #40a9ff' }} theme="light" >
                     <Menu items={[{ key: 'all', label: '全部卡片' }]} />
-                    <Tree treeData={treeData} showLine={true} showIcon={true} />
+                    <Tree treeData={[{
+                        title: '全部标签',
+                        key: '0',
+                        icon: '#',
+                        children: treeData
+                    }]} showLine={true} showIcon={true} />
                 </Sider>
             </Flex >
         </>

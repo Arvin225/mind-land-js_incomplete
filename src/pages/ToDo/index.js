@@ -1,7 +1,7 @@
 import { redirect, useParams } from "react-router-dom"
 import ToDoItem from "./components/ToDoItem/toDoItem"
 import { useEffect, useState } from "react"
-import { fetchGetToDoList, setLoadingToDoList } from "@/store/modules/toDoListStore"
+import { fetchGetToDoList, setLoadingToDoList } from "@/store/modules/toDoStore"
 import { useDispatch, useSelector } from "react-redux"
 import { Card, Input, Affix } from "antd"
 import { PlusOutlined } from "@ant-design/icons"
@@ -29,13 +29,13 @@ function ToDo() {
         dispatch(fetchGetToDoList(list)) // 更新完toDoList后会更新loading
     }, [list])
     // 获取加载状态
-    const { loading } = useSelector(state => state.toDoList)
+    const { loading } = useSelector(state => state.toDo)
     // 获取当前列表数据
-    const { toDoList } = useSelector(state => state.toDoList)
+    const { toDoList } = useSelector(state => state.toDo)
 
 
     // 获取列表名
-    const { toDoListNames } = useSelector(state => state.toDoList)
+    const { toDoListNames } = useSelector(state => state.toDo)
     // 假设传递的list是listId，查找其列表名，查到了就是在自定义列表，没查到就是在智能列表
     let listName, sysListName, star, listId
     const findListName = toDoListNames.find(item => item.id === list)

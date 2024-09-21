@@ -18,7 +18,7 @@ import { Button, Layout, Input, Menu, theme } from 'antd';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchToDoListNames } from '@/store/modules/toDoListStore';
+import { fetchToDoListNames } from '@/store/modules/toDoStore';
 import { postToDoListNameAPI } from '@/apis/layout';
 import { Bounce, ToastContainer, toast } from 'react-toastify';
 import ListName from '../ToDo/components/ListName/listName';
@@ -52,9 +52,9 @@ function Container() {
     }, [dispatch])
 
     // 获取loading
-    const { loadingToDoListNames } = useSelector(state => state.toDoList)
+    const { loadingToDoListNames } = useSelector(state => state.toDo)
     // 获取ToDo的自定义列表
-    const { toDoListNames } = useSelector(state => state.toDoList)
+    const { toDoListNames } = useSelector(state => state.toDo)
 
 
     // 新增列表  

@@ -3,9 +3,9 @@ import { getToDoListAPI } from "@/apis/toDo";
 
 import { createSlice } from "@reduxjs/toolkit";
 
-const toDoListStore = createSlice({
+const toDoStore = createSlice({
 
-    name: 'toDoList',
+    name: 'toDo',
 
     // 初始化数据
     initialState: {
@@ -34,7 +34,7 @@ const toDoListStore = createSlice({
 
 
 /* ------------------------------------------------解构出actionCreater------------------------------------------------ */
-const { setToDoListNames, setLoadingToDoListNames, setToDoList, setLoadingToDoList } = toDoListStore.actions
+const { setToDoListNames, setLoadingToDoListNames, setToDoList, setLoadingToDoList } = toDoStore.actions
 
 
 /* ------------------------------------------------异步方法------------------------------------------------ */
@@ -82,4 +82,4 @@ const fetchGetToDoList = (list) => {
 export { setToDoListNames, fetchToDoListNames, setLoadingToDoListNames, setToDoList, fetchGetToDoList, setLoadingToDoList }
 
 // 默认导出reducer
-export default toDoListStore.reducer
+export default toDoStore.reducer

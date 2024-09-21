@@ -351,5 +351,77 @@
       "listId": "",
       "listName": ""
     }
+  ],
+  "cards": [
+    {
+      "id": "1",
+      "content": "基于网络的应用程序采用React或Angular等技术，移动应用程序采用React Native或Flutter等技术，是构建跨平台应用程序的热门选择。对于桌面应用，Electron是一个流行的框架，它允许你用网络技术创建跨平台的桌面应用。",
+      "builtTime": "2024-09-21 12:00",
+      "statistics": {
+        "builtTime": "2024-9-21 12:00",
+        "updateTime": "2024-9-21 12:00",
+        "words": "128"
+      },
+      "tags": [
+        {
+          "tagId": "1",
+          "tagName": "AppDev"
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "content": "对于分阶段的任务，有多少阶段就配置多少种线程池，否则容易产生饥饿现象",
+      "builtTime": "2024-09-21 12:00",
+      "statistics": {
+        "builtTime": "2024-9-21 12:00",
+        "updateTime": "2024-9-21 12:00",
+        "words": "44"
+      },
+      "tags": [
+        {
+          "tagId": "2",
+          "tagName": "Java/JUC"
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "content": "原子类的内部是用Unsafe类实现各种原子的操作，而Unsafe结合了CAS技术，且其对对象属性值的修改需要借助该属性相对于所属对象在内存中的偏移量offset，同时由于CAS的性质，该属性需要用volatile修饰，防止JIT对其缓存优化",
+      "builtTime": "2024-09-21 12:00",
+      "statistics": {
+        "builtTime": "2024-9-21 12:00",
+        "updateTime": "2024-9-21 12:00",
+        "words": "130"
+      },
+      "tags": [
+        {
+          "tagId": "2",
+          "tagName": "Java/JUC"
+        }
+      ]
+    }
+  ],
+  "tags": [
+    {
+      "id": "1",
+      "tagName": "AppDev",
+      "cardCount": "1",
+      "children": []
+    },
+    {
+      "id": "3",
+      "tagName": "Java",
+      "cardCount": "2",
+      "children": [
+        2
+      ]
+    },
+    {
+      "id": "2",
+      "tagName": "Java/JUC",
+      "cardCount": "2",
+      "children": []
+    }
   ]
 }

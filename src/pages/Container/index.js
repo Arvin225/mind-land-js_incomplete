@@ -21,7 +21,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchToDoListNames } from '@/store/modules/toDoStore';
 import { postToDoListNameAPI } from '@/apis/layout';
 import { Bounce, ToastContainer, toast } from 'react-toastify';
-import ListName from '../ToDo/components/ListName/listName';
+import ListName from '../ToDo/components/ListName';
 
 const { Header, Sider, Content } = Layout;
 

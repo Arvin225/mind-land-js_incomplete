@@ -1,5 +1,5 @@
 import { redirect, useParams } from "react-router-dom"
-import ToDoItem from "./components/ToDoItem/toDoItem"
+import ToDoItem from "./components/ToDoItem"
 import { useEffect, useState } from "react"
 import { fetchGetToDoList, setLoadingToDoList } from "@/store/modules/toDoStore"
 import { useDispatch, useSelector } from "react-redux"

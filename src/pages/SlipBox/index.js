@@ -1,9 +1,8 @@
-import { Breadcrumb, Dropdown, Input, Flex, Space, List, Card, Typography, Menu, Tree } from "antd"
-import { DownOutlined, EllipsisOutlined, MoreOutlined } from "@ant-design/icons"
+import { Breadcrumb, Dropdown, Input, Flex, List, Card, Menu, Tree } from "antd"
+import { DownOutlined, EllipsisOutlined } from "@ant-design/icons"
 import Sider from "antd/es/layout/Sider"
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
 import VirtualList from 'rc-virtual-list'
+import SlipEditor from "./components/SlipEditor";
 
 const { Search } = Input
 
@@ -30,7 +29,42 @@ function SlipBox() {
         statistics: { builtTime: '2024-09-20 22:15', updateTime: '2024-09-20 22:15', words: '11' },
         tagId: '3e5b',
         tagName: 'match/line'
-    }]
+    }, {
+        id: '4',
+        content: 'this is a slip',
+        builtTime: '2024-09-20 22:15',
+        statistics: { builtTime: '2024-09-20 22:15', updateTime: '2024-09-20 22:15', words: '11' },
+        tagId: '3e5b',
+        tagName: 'match/line'
+    }, {
+        id: '5',
+        content: 'this is a slip',
+        builtTime: '2024-09-20 22:15',
+        statistics: { builtTime: '2024-09-20 22:15', updateTime: '2024-09-20 22:15', words: '11' },
+        tagId: '3e5b',
+        tagName: 'match/line'
+    }, {
+        id: '6',
+        content: 'this is a slip',
+        builtTime: '2024-09-20 22:15',
+        statistics: { builtTime: '2024-09-20 22:15', updateTime: '2024-09-20 22:15', words: '11' },
+        tagId: '3e5b',
+        tagName: 'match/line'
+    }, {
+        id: '7',
+        content: 'this is a slip',
+        builtTime: '2024-09-20 22:15',
+        statistics: { builtTime: '2024-09-20 22:15', updateTime: '2024-09-20 22:15', words: '11' },
+        tagId: '3e5b',
+        tagName: 'match/line'
+    }, {
+        id: '8',
+        content: 'this is a slip',
+        builtTime: '2024-09-20 22:15',
+        statistics: { builtTime: '2024-09-20 22:15', updateTime: '2024-09-20 22:15', words: '11' },
+        tagId: '3e5b',
+        tagName: 'match/line'
+    },]
 
     const treeData = [
         {
@@ -157,15 +191,15 @@ function SlipBox() {
                         />
                         <div style={{ display: "none" }}>filter</div>
                     </Flex>
-                    <Flex style={{ width: '100%', height: '100%', paddingTop: '10px', paddingBottom: '10px' }} justify="center">
-                        <ReactQuill theme="snow" style={{ width: '100%', minHeight: 97.017, height: 197.812, maxHeight: 247.273 }} />
+                    <Flex style={{ width: '100%', paddingTop: '10px', paddingBottom: '10px' }} justify="center">
+                        <SlipEditor />
                     </Flex>
                     <Flex style={{ width: '100%' }}>
                         <List split={false} style={{ width: '100%' }}>
-                            <VirtualList data={cards} height={633.2} itemHeight={95.2} itemKey={'id'}>
+                            <VirtualList data={cards} height={766.81} itemHeight={95.2} itemKey={'id'}>
                                 {item => (
-                                    <List.Item key={item.id}>
-                                        <Card style={{ width: '100%', background: '#38393c' }} bordered={false}>
+                                    <List.Item key={item.id} style={{ padding: '5px 0' }}>
+                                        <Card style={{ width: '100%', backgroundColor: '#38393c' }} bordered={false}>
                                             <Flex justify="space-between">
                                                 <div>{item.builtTime}</div>
                                                 <Dropdown
@@ -176,7 +210,6 @@ function SlipBox() {
                                                     <EllipsisOutlined />
                                                 </Dropdown>
                                             </Flex>
-
                                             <div>{item.content}</div>
                                             <div>{'#' + item.tagName}</div>
                                         </Card>

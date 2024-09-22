@@ -90,7 +90,7 @@ function SlipEditor() {
                     onCreated={setEditor}
                     // onChange={editor => setHtml(editor.getHtml())}
                     mode="default"
-                    style={{ height: '55.2px', overflowY: 'hidden' }}
+                    style={{ height: '121.99px', overflowY: 'hidden' }}
                 />
                 <Toolbar
                     editor={editor}

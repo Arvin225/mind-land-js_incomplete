@@ -77,6 +77,10 @@ function SlipBox() {
         }
     }
 
+    tags_.forEach(tag => {
+        if (!tag.TreeBuildAccomplished) tagTrees.push(buildTagTree(tag))
+    })
+
     const pathItems = [
         {
             title: <a href="">标签1</a>,
@@ -89,9 +93,6 @@ function SlipBox() {
         },
     ]
 
-    tags_.forEach(tag => {
-        if (!tag.TreeBuildAccomplished) tagTrees.push(buildTagTree(tag))
-    })
 
     return (
         <>

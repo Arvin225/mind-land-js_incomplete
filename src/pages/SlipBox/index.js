@@ -9,6 +9,7 @@ import PathBar from "./components/PathBar";
 import SortMenu from "./components/SortMenu";
 import RightSider from "./components/RightSider";
 import SearchBar from "./components/SearchBar";
+import _ from "lodash";
 
 function SlipBox() {
     const dispatch = useDispatch()
@@ -23,8 +24,9 @@ function SlipBox() {
     const { cards, tags } = useSelector(state => state.slipBox)
 
 
-    // 未获取到数据之前不允许进一步执行（数据拼接构造、渲染等)
+    /* -------------------------------------未获取到数据之前不允许进一步执行（数据拼接构造、渲染等)------------------------------------- */
     if (loadingCards || loadingTags) return
+    /* -------------------------------------未获取到数据之前不允许进一步执行（数据拼接构造、渲染等)------------------------------------- */
 
     // 标签树数组
     const tagTrees = []
@@ -32,7 +34,7 @@ function SlipBox() {
     const tags_ = tags.map(tag => ({ ...tag, TreeBuildAccomplished: false }))
     console.log(tags_);
 
-    // 构建标签树的方法
+    // 构建标签树的函数
     function buildTagTree(tag) {
         // 递归终止条件：已完成标签树的构建
         if (tag.TreeBuildAccomplished) {
@@ -60,7 +62,7 @@ function SlipBox() {
 
             // 业务逻辑
             return ({
-                title: tag.tagName, // todo /切分，取最后一个名称
+                title: _.last(tag.tagName.split('/')),
                 key: tag.id,
                 icon: '#',
                 children: childNodes
@@ -69,7 +71,7 @@ function SlipBox() {
             // 无孩子（临界值处理）：叶子节点直接返回
             tag.TreeBuildAccomplished = true // 标记为已构建
             return ({
-                title: tag.tagName, // todo /切分，取最后一个名称
+                title: _.last(tag.tagName.split('/')),
                 key: tag.id,
                 icon: '#',
                 isLeaf: true
@@ -77,10 +79,12 @@ function SlipBox() {
         }
     }
 
+    // 开始构建
     tags_.forEach(tag => {
         if (!tag.TreeBuildAccomplished) tagTrees.push(buildTagTree(tag))
     })
 
+    // 路径项
     const pathItems = [
         {
             title: <a href="">标签1</a>,

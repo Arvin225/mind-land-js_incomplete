@@ -1,6 +1,6 @@
 import { Input, Flex } from "antd"
 import SlipEditor from "./components/SlipEditor";
-import { fetchGetCards } from "@/store/modules/slipBoxStore";
+import { fetchGetCards, fetchGetTags } from "@/store/modules/slipBoxStore";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
@@ -15,37 +15,67 @@ function SlipBox() {
 
     useEffect(() => {
         dispatch(fetchGetCards())
+        dispatch(fetchGetTags())
     }, [])
-    // 得到cards的loading状态
-    const { loadingCards } = useSelector(state => state.slipBox)
-    // 得到store里的cards
-    const { cards } = useSelector(state => state.slipBox)
+    // 得到cards、tags的loading状态
+    const { loadingCards, loadingTags } = useSelector(state => state.slipBox)
+    // 得到store里的cards tags
+    const { cards, tags } = useSelector(state => state.slipBox)
 
-    const treeData = [
-        {
-            title: 'tag1',
-            key: '1',
-            icon: '#',
-            children: [{
-                title: 'tag1-1',
-                key: '1-1',
+
+    // 未获取到数据之前不允许进一步执行（数据拼接构造、渲染等)
+    if (loadingCards || loadingTags) return
+
+    // 标签树数组
+    const tagTrees = []
+    // 初始化标记
+    const tags_ = tags.map(tag => ({ ...tag, TreeBuildAccomplished: false }))
+    console.log(tags_);
+
+    // 构建标签树的方法
+    function buildTagTree(tag) {
+        // 递归终止条件：已完成标签树的构建
+        if (tag.TreeBuildAccomplished) {
+            // 查找该标签树的索引
+            const tempTreeIndex = tagTrees.findIndex(tree => tree.key === tag.id)
+            // 获得该标签树
+            const tempTree = tagTrees[tempTreeIndex]
+            // 删除该标签树
+            tagTrees.splice(tempTreeIndex, 1)
+            return tempTree
+        }
+
+        const children = tag.children
+        // 有孩子
+        if (children.length) {
+            const childNodes = []
+            children.forEach(cid => {
+                const ctag = tags_.find(tag => tag.id === cid) // todo 后续看是否可优化
+                //递归
+                childNodes.push(buildTagTree(ctag))
+            })
+
+            // 标记当前tag为已构建标签树
+            tag.TreeBuildAccomplished = true
+
+            // 业务逻辑
+            return ({
+                title: tag.tagName, // todo /切分，取最后一个名称
+                key: tag.id,
+                icon: '#',
+                children: childNodes
+            })
+        } else {
+            // 无孩子（临界值处理）：叶子节点直接返回
+            tag.TreeBuildAccomplished = true // 标记为已构建
+            return ({
+                title: tag.tagName, // todo /切分，取最后一个名称
+                key: tag.id,
                 icon: '#',
                 isLeaf: true
-            }]
-        },
-        {
-            title: 'tag2',
-            key: '2',
-            icon: '#',
-            isLeaf: true
-        },
-        {
-            title: 'tag3',
-            key: '3',
-            icon: '#',
-            isLeaf: true,
-        },
-    ];
+            })
+        }
+    }
 
     const pathItems = [
         {
@@ -59,7 +89,9 @@ function SlipBox() {
         },
     ]
 
-    if (loadingCards) return
+    tags_.forEach(tag => {
+        if (!tag.TreeBuildAccomplished) tagTrees.push(buildTagTree(tag))
+    })
 
     return (
         <>
@@ -94,7 +126,7 @@ function SlipBox() {
                 </Flex>
 
                 {/* 右侧边栏-标签树 */}
-                <RightSider treeData={treeData} />
+                <RightSider treeData={tagTrees} />
             </Flex >
         </>
 

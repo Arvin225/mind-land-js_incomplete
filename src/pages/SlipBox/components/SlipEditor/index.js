@@ -2,8 +2,9 @@ import '@wangeditor/editor/dist/css/style.css'
 import { Editor, Toolbar } from '@wangeditor/editor-for-react'
 import { Boot } from "@wangeditor/editor";
 import { useEffect, useState } from 'react';
+import { Button } from 'antd';
 
-function SlipEditor() {
+function SlipEditor({ inputSubmit }) {
 
     // editor 实例
     const [editor, setEditor] = useState(null)
@@ -45,7 +46,7 @@ function SlipEditor() {
             return new TagMenu() // 把 `YourMenuClass` 替换为你菜单的 class
         }
     }
-    //判断如果已经插入进去，不在二次插入
+    //判断: 如果已经插入进去，不在二次插入
     if (editor && !editor.getAllMenuKeys().includes("tag")) {
         Boot.registerMenu(menuTagConf)
     }
@@ -98,6 +99,7 @@ function SlipEditor() {
                     mode="default"
                     style={{ height: '40px', borderBottom: '1px solid #ccc' }}
                 />
+                <Button onClick={() => inputSubmit(editor)} />
             </div>
         </>
     )

@@ -9,7 +9,10 @@ import PathBar from "./components/PathBar";
 import SortMenu from "./components/SortMenu";
 import RightSider from "./components/RightSider";
 import SearchBar from "./components/SearchBar";
-import _ from "lodash";
+import _, { forEachRight, update } from "lodash";
+import { getTagByTagNameAPI, patchTagAPI, postCardAPI, postTagAPI } from "@/apis/slipBox";
+import { Bounce, toast, ToastContainer } from "react-toastify";
+import dayjs from "dayjs";
 
 function SlipBox() {
     const dispatch = useDispatch()
@@ -23,6 +26,156 @@ function SlipBox() {
     // 得到store里的cards tags
     const { cards, tags } = useSelector(state => state.slipBox)
 
+    /* 
+        发送按钮
+        获取编辑器输入内容
+        post请求数据库
+        更新store
+        清空编辑区（editor.clear()）
+    */
+    const inputSubmit = async (editor) => {
+        const contentWithHtml = editor.getHtml()
+        const contentWithText = editor.getText()
+        // 找出标签
+        if (contentWithText) {
+            // 按空格分离
+            const probTagNames = contentWithText.split(' ') // todo 换行时的情况等等
+            // 过滤并去重出标签
+            const tagNames = _.uniq(probTagNames.filter(item => _.startsWith(item, '#')))
+
+            // 定义card的标签数组，标签存放结束后该数组也收集完毕
+            const cardTags = []
+
+            // 保存标签到数据库的函数（不含计数）
+            async function saveTag(name) {
+                // 1.1 判断当前标签及其祖先标签是否存在
+                const splitNames = name.split('/') // 去除“#”再按“/”分割
+                let cid
+                for (let i = splitNames.length; i > 0; i--) {
+                    const tagName = splitNames.slice(0, i).join('/') // 取前i个分割的name以“/”组成各父级标签的tagName（或当前标签的tagName）
+
+                    let tag
+                    try {
+                        // 数据库查询该标签
+                        const res = await getTagByTagNameAPI(tagName)
+                        tag = await res.data[0]
+                    } catch (error) {
+                        toast.error('提交失败，请稍后重试')
+                        console.error('Error: ', error)
+                    }
+
+                    // 1.1.1 存在则将cid添加到children（如果为叶子标签则cid为空）
+                    if (tag) {
+                        cid && tag.children.push(cid) // 不是叶子标签时添加下一级标签的id到children
+                        try {
+                            await patchTagAPI(tag)
+                            // 如果是叶子标签则收集到card的标签数组
+                            i === splitNames.length && cardTags.push({ tagId: tag.id, tagName: tagName })
+
+                            // 当第一个满足‘存在’的标签修改完成后，将cid置为空，后续父级标签便不再添加孩子
+                            cid = ''
+                        } catch (error) {
+                            toast.error('提交失败，请稍后重试')
+                            console.error('Error: ', error)
+                        }
+
+                        // 1.1.2 不存在则创建（将cardCount置为0，将cid添加到children）
+                    } else {
+                        try {
+                            const newTag = { tagName: tagName, cardCount: 0, children: [] }
+                            cid && (newTag.children = [cid])
+                            await postTagAPI(newTag)
+                            // 再查回来 // todo 暂时这样写，后续后端实现回传
+                            const res = await getTagByTagNameAPI(tagName)
+                            const id = await res.data[0].id
+                            // 如果是叶子标签则收集到card的标签数组
+                            i === splitNames.length && cardTags.push({ tagId: id, tagName: tagName })
+                            // 1.1.2.1 得到其id，存放到cid，遍历上一级标签时添加 
+                            cid = id
+                        } catch (error) {
+                            toast.error('提交失败，请稍后重试')
+                            console.error(`${tagName} Error: `, error)
+                        }
+                    }
+                }
+            }
+
+            const uniqLeafTagNames = []
+            const preTagNames = []
+            // 1.遍历标签，将标签存到tags表
+            for (let i = 0; i < tagNames.length; i++) {
+                const name = tagNames[i].slice(1) // 去除“#”
+                // 将标签保存到tags表（无计数）
+                await saveTag(name)
+
+                uniqLeafTagNames.push(name)
+
+                const splitNames = name.split('/') // 分离
+                for (let j = splitNames.length - 1; j > 0; j--) {
+                    preTagNames.push(splitNames.slice(0, j).join('/')) // 组合父级标签名并收集
+                }
+            }
+            // 2.将所有标签（包括父级标签）去重后挨个提交cardCount+1
+            // 去重父级标签
+            const uniqPreTagNames = _.uniq(preTagNames)
+            // 合并去重后的叶子及父级标签
+            const uniqAllTagNames = uniqLeafTagNames.concat(uniqPreTagNames)
+            // 开始提交cardCount+1
+            const promiseList = []
+            uniqAllTagNames.forEach(async name => {
+                // 获取当前标签
+                promiseList.push(await getTagByTagNameAPI(name))
+            })
+            Promise.all(promiseList).then(resList => {
+                const promiseList = []
+                resList.forEach(async res => {
+                    const id = await res.data[0].id
+                    const cardCount = await res.data[0].cardCount
+                    // 提交cardCount+1
+                    promiseList.push(await patchTagAPI({ id: id, cardCount: cardCount + 1 }))
+                })
+                Promise.all(promiseList).then(async resList => {
+                    // 3.将id与html文本一起存到cards表
+                    const currentDateTime = dayjs().format('YYYY-MM-DD HH:mm') // 格式化当前时间
+                    try {
+                        await postCardAPI(
+                            {
+                                content: contentWithHtml,
+                                builtTime: currentDateTime,
+                                statistics: {
+                                    builtTime: currentDateTime,
+                                    updateTime: currentDateTime,
+                                    words: contentWithText.length
+                                },
+                                tags: cardTags
+                            }
+                        )
+                        // 4.更新store (cards、tags) 
+                        // 更新store-tags
+                        dispatch(fetchGetTags())
+                        // todo 判断添加的card的tag是否是在当前路径下，是则拉取cards
+                        dispatch(fetchGetCards())
+                        // todo 清空输入框
+
+                    } catch (error) {
+                        toast.error('提交失败，请稍后重试')
+                        console.error('Error: ', error);
+                    }
+
+                }).catch(error => {
+                    toast.error('提交失败，请稍后重试')
+                    console.error('Error: ', error);
+                })
+            }).catch(error => {
+                toast.error('提交失败，请稍后重试')
+                console.error('Error: ', error);
+            })
+
+
+
+        }
+    }
+
 
     /* -------------------------------------未获取到数据之前不允许进一步执行（数据拼接构造、渲染等)------------------------------------- */
     if (loadingCards || loadingTags) return
@@ -32,7 +185,6 @@ function SlipBox() {
     const tagTrees = []
     // 初始化标记
     const tags_ = tags.map(tag => ({ ...tag, TreeBuildAccomplished: false }))
-    console.log(tags_);
 
     // 构建标签树的函数
     function buildTagTree(tag) {
@@ -100,6 +252,18 @@ function SlipBox() {
 
     return (
         <>
+            <ToastContainer position="top-center"
+                autoClose={2000}
+                hideProgressBar
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="colored"
+                transition={Bounce}
+            />
             <Flex horizontal={'true'} gap={20} justify="center">
                 <Flex vertical={'true'} style={{ width: '600px', border: '1px solid #40a9ff' }} justify={'flex-start'} align={'center'}>
                     <Flex justify={'space-between'} style={{ width: '100%' }}>
@@ -121,7 +285,7 @@ function SlipBox() {
                     <Flex style={{ width: '100%', paddingTop: '10px', paddingBottom: '10px' }} justify="center">
 
                         {/* 输入框 */}
-                        <SlipEditor />
+                        <SlipEditor inputSubmit={inputSubmit} />
                     </Flex>
                     <Flex style={{ width: '100%' }}>
 

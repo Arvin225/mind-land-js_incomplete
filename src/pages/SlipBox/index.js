@@ -1,7 +1,7 @@
-import { Input, Flex } from "antd"
+import { Flex } from "antd"
 import SlipEditor from "./components/SlipEditor";
 import { fetchGetCards, fetchGetTags } from "@/store/modules/slipBoxStore";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import CardList from "./components/CardList";
@@ -9,15 +9,16 @@ import PathBar from "./components/PathBar";
 import SortMenu from "./components/SortMenu";
 import RightSider from "./components/RightSider";
 import SearchBar from "./components/SearchBar";
-import _, { forEachRight, update } from "lodash";
-import { getTagByTagNameAPI, patchTagAPI, postCardAPI, postTagAPI } from "@/apis/slipBox";
+import _, { } from "lodash";
+import { getTagAPI, getTagByTagNameAPI, patchTagAPI, postCardAPI, postTagAPI } from "@/apis/slipBox";
 import { Bounce, toast, ToastContainer } from "react-toastify";
 import dayjs from "dayjs";
 import { compile } from "html-to-text";
+import usePathItems from "./hooks/usePathItems";
 
 function SlipBox() {
     const dispatch = useDispatch()
-
+    const { pathItems, buildPathItems } = usePathItems()
     useEffect(() => {
         dispatch(fetchGetCards())
         dispatch(fetchGetTags())
@@ -192,7 +193,7 @@ function SlipBox() {
                 } */
             }
 
-            const uniqLeafTagNames = [] //单独分离出叶子标签是为了提高性能，已经去重了便不必再去重
+            const uniqAllTagNames = []
             const preTagNames = []
             // 1.遍历标签，将标签存到tags表
             for (let i = 0; i < tagNames.length; i++) {
@@ -201,7 +202,7 @@ function SlipBox() {
                 await saveTag(name)
 
                 // 收集去除“#”的叶子标签
-                uniqLeafTagNames.push(name)
+                uniqAllTagNames.push(name) // 单独收集叶子标签是为了提高性能，已经去重了便不必再去重
 
                 const splitNames = name.split('/') // 分离
                 for (let j = splitNames.length - 1; j > 0; j--) {
@@ -212,7 +213,7 @@ function SlipBox() {
             // 去重父级标签
             const uniqPreTagNames = _.uniq(preTagNames)
             // 合并去重后的叶子及父级标签
-            const uniqAllTagNames = uniqLeafTagNames.concat(uniqPreTagNames)
+            uniqAllTagNames.push(...uniqPreTagNames)
             // 2.1 提交cardCount+1
             plusCardCount(uniqAllTagNames).then(async resList => {
                 // 3.将id与html文本一起存到cards表
@@ -236,6 +237,21 @@ function SlipBox() {
 
 
         }
+    }
+
+    // 处理标签树的选中
+    const handleTagSelected = (keys) => {
+        const tagId = keys[0]
+        if (!tagId) {
+            buildPathItems('')
+            return
+        }
+        getTagAPI(tagId).then(res => {
+            const tagName = res.data.tagName
+            buildPathItems(tagName)
+        }).catch(error => {
+            console.error('Error: ', error);
+        })
     }
 
 
@@ -300,7 +316,7 @@ function SlipBox() {
     })
 
     // 路径项
-    const pathItems = [
+    /* const pathItems = [
         {
             title: <a href="">标签1</a>,
         },
@@ -310,7 +326,7 @@ function SlipBox() {
         {
             title: <a href="">标签1-1-1</a>,
         },
-    ]
+    ] */
 
 
     return (
@@ -358,7 +374,7 @@ function SlipBox() {
                 </Flex>
 
                 {/* 右侧边栏-标签树 */}
-                <RightSider treeData={tagTrees} />
+                <RightSider treeData={tagTrees} onSelect={handleTagSelected} />
             </Flex >
         </>
 

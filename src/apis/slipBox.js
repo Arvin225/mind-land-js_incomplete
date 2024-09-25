@@ -11,6 +11,11 @@ export function getTagsAPI() {
     return request.get('/tags')
 }
 
+// 获取标签
+export function getTagAPI(id) {
+    return request.get(`/tags/${id}`)
+}
+
 // 新增卡片
 export function postCardAPI(card) {
     return request.post('/cards', card)

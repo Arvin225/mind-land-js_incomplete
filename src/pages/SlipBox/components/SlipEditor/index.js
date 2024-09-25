@@ -81,7 +81,9 @@ function SlipEditor({ inputSubmit }) {
             setEditor(null)
         }
     }, [editor])
+
     const [html, setHtml] = useState('')
+
     return (
         <>
             <div style={{ border: '1px solid #ccc', zIndex: 100, width: '100%' }}>

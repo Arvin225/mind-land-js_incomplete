@@ -27,13 +27,7 @@ function SlipBox() {
     // 得到store里的cards tags
     const { cards, tags } = useSelector(state => state.slipBox)
 
-    /* 
-        发送按钮
-        获取编辑器输入内容
-        post请求数据库
-        更新store
-        清空编辑区（editor.clear()）
-    */
+    // 处理编辑器输入框提交
     const inputSubmit = async (editor) => {
         const contentWithHtml = editor.getHtml()
         const contentWithText = editor.getText()
@@ -62,7 +56,7 @@ function SlipBox() {
                 probTagNames.push(...s.split(' '))
             })
             // 按空格分离
-            // const probTagNames = contentWithText.split(' ') // todo 换行时的情况等等
+            // const probTagNames = contentWithText.split(' ') 
 
             // 过滤并去重出标签
             const tagNames = _.uniq(probTagNames.filter(item => _.startsWith(item, '#')))
@@ -70,7 +64,7 @@ function SlipBox() {
             // 定义card的标签数组，标签存放结束后该数组也收集完毕
             const cardTags = []
 
-            // 保存标签到数据库的函数（不含计数）
+            // 保存标签到数据库的函数
             async function saveTag(name) {
                 // 1.1 判断当前标签及其祖先标签是否存在
                 const splitNames = name.split('/') // 去除“#”再按“/”分割
@@ -124,7 +118,81 @@ function SlipBox() {
                 }
             }
 
-            const uniqLeafTagNames = []
+            // 修改标签的cardCount+1的函数
+            async function plusCardCount(uniqAllTagNames) {
+                const promiseList = [];
+                for (let i = 0; i < uniqAllTagNames.length; i++) {
+                    const name = uniqAllTagNames[i];
+                    // 获取当前标签
+                    promiseList.push(await getTagByTagNameAPI(name));
+                }
+                /* uniqAllTagNames.forEach(async name => {
+                    // 获取当前标签
+                    promiseList.push(await getTagByTagNameAPI(name))
+                }) */
+                Promise.all(promiseList).then(async (resList) => {
+                    const promiseList = [];
+                    for (let i = 0; i < resList.length; i++) {
+                        const id = await resList[i].data[0].id;
+                        const cardCount = await resList[i].data[0].cardCount;
+                        // 提交cardCount+1
+                        promiseList.push(await patchTagAPI({ id: id, cardCount: cardCount + 1 }));
+                    }
+                    /* resList.forEach(async res => {
+                        const id = await res.data[0].id
+                        const cardCount = await res.data[0].cardCount
+                        // 提交cardCount+1
+                        promiseList.push(await patchTagAPI({ id: id, cardCount: cardCount + 1 }))
+                    }) */
+                    return Promise.all(promiseList);
+                }).catch(error => {
+                    toast.error('提交失败，请稍后重试');
+                    console.error('Error: ', error);
+                });
+            }
+
+            // 保存card的函数
+            async function saveCard(contentWithHtml, contentWithText, cardTags) {
+                const currentDateTime = dayjs().format('YYYY-MM-DD HH:mm'); // 格式化当前时间
+                return postCardAPI(
+                    {
+                        content: contentWithHtml,
+                        builtTime: currentDateTime,
+                        statistics: {
+                            builtTime: currentDateTime,
+                            updateTime: currentDateTime,
+                            words: contentWithText.length
+                        },
+                        tags: cardTags
+                    }
+                )
+                /* try {
+                    await postCardAPI(
+                        {
+                            content: contentWithHtml,
+                            builtTime: currentDateTime,
+                            statistics: {
+                                builtTime: currentDateTime,
+                                updateTime: currentDateTime,
+                                words: contentWithText.length
+                            },
+                            tags: cardTags
+                        }
+                    );
+                    // 4.更新store (cards、tags) 
+                    // 更新store-tags
+                    dispatch(fetchGetTags());
+                    // todo 判断添加的card的tag是否是在当前路径下，是则拉取cards
+                    dispatch(fetchGetCards());
+                    // 清空输入框
+                    editor.clear();
+                } catch (error) {
+                    toast.error('提交失败，请稍后重试');
+                    console.error('Error: ', error);
+                } */
+            }
+
+            const uniqLeafTagNames = [] //单独分离出叶子标签是为了提高性能，已经去重了便不必再去重
             const preTagNames = []
             // 1.遍历标签，将标签存到tags表
             for (let i = 0; i < tagNames.length; i++) {
@@ -132,6 +200,7 @@ function SlipBox() {
                 // 将标签保存到tags表（无计数）
                 await saveTag(name)
 
+                // 收集去除“#”的叶子标签
                 uniqLeafTagNames.push(name)
 
                 const splitNames = name.split('/') // 分离
@@ -139,64 +208,22 @@ function SlipBox() {
                     preTagNames.push(splitNames.slice(0, j).join('/')) // 组合父级标签名并收集
                 }
             }
-            // 2.将所有标签（包括父级标签）去重后挨个提交cardCount+1
+            // 2.将所有标签（包括父级标签）去重后提交cardCount+1的修改
             // 去重父级标签
             const uniqPreTagNames = _.uniq(preTagNames)
             // 合并去重后的叶子及父级标签
             const uniqAllTagNames = uniqLeafTagNames.concat(uniqPreTagNames)
-            // 开始提交cardCount+1
-            const promiseList = []
-            for (let i = 0; i < uniqAllTagNames.length; i++) {
-                const name = uniqAllTagNames[i];
-                // 获取当前标签
-                promiseList.push(await getTagByTagNameAPI(name))
-            }
-            /* uniqAllTagNames.forEach(async name => {
-                // 获取当前标签
-                promiseList.push(await getTagByTagNameAPI(name))
-            }) */
-            Promise.all(promiseList).then(async resList => {
-                const promiseList = []
-                for (let i = 0; i < resList.length; i++) {
-                    const id = await resList[i].data[0].id;
-                    const cardCount = await resList[i].data[0].cardCount
-                    // 提交cardCount+1
-                    promiseList.push(await patchTagAPI({ id: id, cardCount: cardCount + 1 }))
-                }
-                /* resList.forEach(async res => {
-                    const id = await res.data[0].id
-                    const cardCount = await res.data[0].cardCount
-                    // 提交cardCount+1
-                    promiseList.push(await patchTagAPI({ id: id, cardCount: cardCount + 1 }))
-                }) */
-                Promise.all(promiseList).then(async resList => {
-                    // 3.将id与html文本一起存到cards表
-                    const currentDateTime = dayjs().format('YYYY-MM-DD HH:mm') // 格式化当前时间
-                    try {
-                        await postCardAPI(
-                            {
-                                content: contentWithHtml,
-                                builtTime: currentDateTime,
-                                statistics: {
-                                    builtTime: currentDateTime,
-                                    updateTime: currentDateTime,
-                                    words: contentWithText.length
-                                },
-                                tags: cardTags
-                            }
-                        )
-                        // 4.更新store (cards、tags) 
-                        // 更新store-tags
-                        dispatch(fetchGetTags())
-                        // todo 判断添加的card的tag是否是在当前路径下，是则拉取cards
-                        dispatch(fetchGetCards())
-                        // 清空输入框
-                        editor.clear()
-                    } catch (error) {
-                        toast.error('提交失败，请稍后重试')
-                        console.error('Error: ', error);
-                    }
-
+            // 2.1 提交cardCount+1
+            plusCardCount(uniqAllTagNames).then(async resList => {
+                // 3.将id与html文本一起存到cards表
+                saveCard(contentWithHtml, contentWithText, cardTags).then(res => {
+                    // 4.更新store (cards、tags) 
+                    // 更新store-tags
+                    dispatch(fetchGetTags());
+                    // todo 判断添加的card的tag是否是在当前路径下，是则拉取cards
+                    dispatch(fetchGetCards());
+                    // 清空输入框
+                    editor.clear();
                 }).catch(error => {
                     toast.error('提交失败，请稍后重试')
                     console.error('Error: ', error);
@@ -220,6 +247,7 @@ function SlipBox() {
     const tagTrees = []
     // 初始化标记
     const tags_ = tags.map(tag => ({ ...tag, TreeBuildAccomplished: false }))
+
 
     // 构建标签树的函数
     function buildTagTree(tag) {

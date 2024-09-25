@@ -13,6 +13,7 @@ import _, { forEachRight, update } from "lodash";
 import { getTagByTagNameAPI, patchTagAPI, postCardAPI, postTagAPI } from "@/apis/slipBox";
 import { Bounce, toast, ToastContainer } from "react-toastify";
 import dayjs from "dayjs";
+import { compile } from "html-to-text";
 
 function SlipBox() {
     const dispatch = useDispatch()
@@ -38,8 +39,31 @@ function SlipBox() {
         const contentWithText = editor.getText()
         // 找出标签
         if (contentWithText) {
+            // 按<p>分离
+            const htmlContentArraySplitByP = contentWithHtml.split('<p>')
+            // 再按<li>分离
+            const htmlContentArraySplitByPAndLi = []
+            htmlContentArraySplitByP.forEach(s => {
+                htmlContentArraySplitByPAndLi.push(...s.split('<li>'))
+            })
+            // 清洗成text
+            const compiledConvert = compile({
+                selectors: [
+                    // 配置跳过p和li标签的换行符输出
+                    { selector: 'p', format: 'skip' },
+                    { selector: 'li', format: 'skip' },
+                ]
+            })
+            const textContentArraySplitByPAndLi = htmlContentArraySplitByPAndLi.map(compiledConvert)
+
             // 按空格分离
-            const probTagNames = contentWithText.split(' ') // todo 换行时的情况等等
+            const probTagNames = []
+            textContentArraySplitByPAndLi.forEach(s => {
+                probTagNames.push(...s.split(' '))
+            })
+            // 按空格分离
+            // const probTagNames = contentWithText.split(' ') // todo 换行时的情况等等
+
             // 过滤并去重出标签
             const tagNames = _.uniq(probTagNames.filter(item => _.startsWith(item, '#')))
 
@@ -122,18 +146,29 @@ function SlipBox() {
             const uniqAllTagNames = uniqLeafTagNames.concat(uniqPreTagNames)
             // 开始提交cardCount+1
             const promiseList = []
-            uniqAllTagNames.forEach(async name => {
+            for (let i = 0; i < uniqAllTagNames.length; i++) {
+                const name = uniqAllTagNames[i];
                 // 获取当前标签
                 promiseList.push(await getTagByTagNameAPI(name))
-            })
-            Promise.all(promiseList).then(resList => {
+            }
+            /* uniqAllTagNames.forEach(async name => {
+                // 获取当前标签
+                promiseList.push(await getTagByTagNameAPI(name))
+            }) */
+            Promise.all(promiseList).then(async resList => {
                 const promiseList = []
-                resList.forEach(async res => {
+                for (let i = 0; i < resList.length; i++) {
+                    const id = await resList[i].data[0].id;
+                    const cardCount = await resList[i].data[0].cardCount
+                    // 提交cardCount+1
+                    promiseList.push(await patchTagAPI({ id: id, cardCount: cardCount + 1 }))
+                }
+                /* resList.forEach(async res => {
                     const id = await res.data[0].id
                     const cardCount = await res.data[0].cardCount
                     // 提交cardCount+1
                     promiseList.push(await patchTagAPI({ id: id, cardCount: cardCount + 1 }))
-                })
+                }) */
                 Promise.all(promiseList).then(async resList => {
                     // 3.将id与html文本一起存到cards表
                     const currentDateTime = dayjs().format('YYYY-MM-DD HH:mm') // 格式化当前时间
@@ -155,8 +190,8 @@ function SlipBox() {
                         dispatch(fetchGetTags())
                         // todo 判断添加的card的tag是否是在当前路径下，是则拉取cards
                         dispatch(fetchGetCards())
-                        // todo 清空输入框
-
+                        // 清空输入框
+                        editor.clear()
                     } catch (error) {
                         toast.error('提交失败，请稍后重试')
                         console.error('Error: ', error);

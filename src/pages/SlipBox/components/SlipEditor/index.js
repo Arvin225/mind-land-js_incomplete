@@ -2,7 +2,7 @@ import '@wangeditor/editor/dist/css/style.css'
 import { Editor, Toolbar } from '@wangeditor/editor-for-react'
 import { Boot } from "@wangeditor/editor";
 import { useEffect, useState } from 'react';
-import { Button } from 'antd';
+import { Button, Typography } from 'antd';
 
 function SlipEditor({ inputSubmit }) {
 
@@ -81,7 +81,7 @@ function SlipEditor({ inputSubmit }) {
             setEditor(null)
         }
     }, [editor])
-
+    const [html, setHtml] = useState('')
     return (
         <>
             <div style={{ border: '1px solid #ccc', zIndex: 100, width: '100%' }}>
@@ -89,7 +89,7 @@ function SlipEditor({ inputSubmit }) {
                     defaultConfig={editorConfig}
                     // value={html}
                     onCreated={setEditor}
-                    // onChange={editor => setHtml(editor.getHtml())}
+                    onChange={editor => setHtml(editor.getHtml())}
                     mode="default"
                     style={{ height: '121.99px', overflowY: 'hidden' }}
                 />
@@ -99,8 +99,10 @@ function SlipEditor({ inputSubmit }) {
                     mode="default"
                     style={{ height: '40px', borderBottom: '1px solid #ccc' }}
                 />
-                <Button onClick={() => inputSubmit(editor)} />
+                <Button onClick={() => inputSubmit(editor)} >{'submit'}</Button>
+                <div><Typography.Text >{html}</Typography.Text></div>
             </div>
+
         </>
     )
 

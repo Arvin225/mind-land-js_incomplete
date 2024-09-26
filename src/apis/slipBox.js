@@ -2,7 +2,9 @@ import request from "@/utils/request";
 
 // 获取卡片们
 export function getCardsAPI(tagId) {
-    return request.get('/cards', { params: { tags: { tagId } } })
+    let tid
+    tagId && (tid = '<p>'.concat(tagId.concat('<p>')))
+    return request.get('/cards', { params: { tags_like: tid } })
 
 }
 
@@ -17,8 +19,9 @@ export function getTagAPI(id) {
 }
 
 // 新增卡片
-export function postCardAPI(card) {
-    return request.post('/cards', card)
+export function postCardAPI(card) { // 由于json-server不支持数组元素的精确匹配，暂时将tags处理成字符串
+    const tags = '<p>'.concat((card.tags.join('<p>')).concat('<p>'))
+    return request.post('/cards', { ...card, tags: tags })
 }
 
 // 新增标签

@@ -20,8 +20,11 @@ function RightSider({ treeData, onSelect }) {
                     selectable: false,
                     style: { fontSize: '12px', color: '#ded1b7' }
                 }]}
-                showLine={true} showIcon={true} style={{ color: '#9d9d9d' }}
-                onSelect={(keys) => onSelect(keys)} />
+                showLine={true}
+                showIcon={true}
+                blockNode={true}
+                onSelect={(keys) => onSelect(keys)}
+                style={{ color: '#9d9d9d' }} />
         </Sider>
     )
 

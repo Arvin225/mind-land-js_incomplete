@@ -2,6 +2,7 @@ import { getToDoListNamesAPI } from "@/apis/layout";
 import { getToDoListAPI } from "@/apis/toDo";
 
 import { createSlice } from "@reduxjs/toolkit";
+import { toast } from "react-toastify";
 
 const toDoStore = createSlice({
 
@@ -41,10 +42,14 @@ const { setToDoListNames, setLoadingToDoListNames, setToDoList, setLoadingToDoLi
 // 获取自定义列表名
 const fetchToDoListNames = () => {
     return async (dispatch) => {
-        const res = await getToDoListNamesAPI()
-        dispatch(setToDoListNames(res.data))
-
-        dispatch(setLoadingToDoListNames(false))
+        try {
+            const res = await getToDoListNamesAPI()
+            dispatch(setToDoListNames(res.data))
+            dispatch(setLoadingToDoListNames(false))
+        } catch (error) {
+            toast.error('获取列表失败，请稍后重试')
+            console.error('Error: ', error);
+        }
     }
 }
 
@@ -52,27 +57,30 @@ const fetchToDoListNames = () => {
 const fetchGetToDoList = (list) => {
     return async (dispatch) => {
         let res
-        switch (list) {
-            case 'all':
-                res = await getToDoListAPI({ done: false })
-                break;
-            case 'star':
-                res = await getToDoListAPI({ star: true, done: false })
-                break;
-            case 'done':
-                res = await getToDoListAPI({ done: true })
-                break;
-            case 'bin':
-                res = await getToDoListAPI({ del: true })
-                break;
-            default:
-                res = await getToDoListAPI({ listId: list, done: false })
-                break;
+        try {
+            switch (list) {
+                case 'all':
+                    res = await getToDoListAPI({ done: false })
+                    break;
+                case 'star':
+                    res = await getToDoListAPI({ star: true, done: false })
+                    break;
+                case 'done':
+                    res = await getToDoListAPI({ done: true })
+                    break;
+                case 'bin':
+                    res = await getToDoListAPI({ del: true })
+                    break;
+                default:
+                    res = await getToDoListAPI({ listId: list, done: false })
+                    break;
+            }
+            dispatch(setToDoList(res.data))
+            dispatch(setLoadingToDoList(false))
+        } catch (error) {
+            toast.error('获取当前列表待办项失败，请稍后重试')
+            console.error('Error: ', error);
         }
-
-        dispatch(setToDoList(res.data))
-
-        dispatch(setLoadingToDoList(false))
     }
 }
 

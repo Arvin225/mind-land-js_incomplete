@@ -74,7 +74,7 @@ function CardList({ cards }) {
                                     </Dropdown>
                                 </Flex>
                                 <div style={{ paddingBottom: '7px' }}>{item.content}</div>
-                                {item.tags.map(item => (<div key={item.tagId}>{'#' + item.tagName}</div>))}
+                                {/* {item.tags.map(item => (<div key={item.tagId}>{'#' + item.tagName}</div>))} */}
                             </div>
 
                         </Card>

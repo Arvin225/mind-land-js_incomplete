@@ -8,7 +8,15 @@ import { ConfigProvider, theme } from 'antd';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <ConfigProvider theme={{ algorithm: theme.darkAlgorithm }}>
+  <ConfigProvider
+    theme={{
+      algorithm: theme.darkAlgorithm,
+      components: {
+        Tree: {
+          titleHeight: 35.980
+        }
+      }
+    }}>
     <Provider store={store}><App /></Provider>
   </ConfigProvider>
 

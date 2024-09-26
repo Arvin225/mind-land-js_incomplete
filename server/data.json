@@ -362,12 +362,7 @@
         "updateTime": "2024-9-21 12:00",
         "words": "128"
       },
-      "tags": [
-        {
-          "tagId": "1",
-          "tagName": "AppDev"
-        }
-      ]
+      "tags": "<p>1<p>"
     },
     {
       "id": "2",
@@ -378,16 +373,7 @@
         "updateTime": "2024-9-21 12:00",
         "words": "44"
       },
-      "tags": [
-        {
-          "tagId": "2",
-          "tagName": "Java/JUC"
-        },
-        {
-          "tagId": "3",
-          "tagName": "Java/JUC/ThreadPool"
-        }
-      ]
+      "tags": "<p>2<p>3<p>"
     },
     {
       "id": "3",
@@ -398,12 +384,7 @@
         "updateTime": "2024-9-21 12:00",
         "words": "130"
       },
-      "tags": [
-        {
-          "tagId": "2",
-          "tagName": "Java/JUC"
-        }
-      ]
+      "tags": "<p>2<p>"
     },
     {
       "id": "7aad",
@@ -414,24 +395,7 @@
         "updateTime": "2024-09-25 15:13",
         "words": 113
       },
-      "tags": [
-        {
-          "tagId": "019e",
-          "tagName": "Java/JVM"
-        },
-        {
-          "tagId": "a928",
-          "tagName": "test"
-        },
-        {
-          "tagId": "2",
-          "tagName": "Java/JUC"
-        },
-        {
-          "tagId": "c564",
-          "tagName": "Thread"
-        }
-      ]
+      "tags": "<p>019e<p>a928<p>2<p>c564<p>"
     },
     {
       "id": "ee27",
@@ -442,16 +406,7 @@
         "updateTime": "2024-09-25 15:24",
         "words": 92
       },
-      "tags": [
-        {
-          "tagId": "c977",
-          "tagName": "toslipbox"
-        },
-        {
-          "tagId": "fcf0",
-          "tagName": "love"
-        }
-      ]
+      "tags": "<p>c977<p>fcf0<p>"
     },
     {
       "id": "6195",
@@ -462,12 +417,7 @@
         "updateTime": "2024-09-25 15:59",
         "words": 13
       },
-      "tags": [
-        {
-          "tagId": "a928",
-          "tagName": "test"
-        }
-      ]
+      "tags": "<p>a928<p>"
     },
     {
       "id": "a99b",
@@ -478,16 +428,18 @@
         "updateTime": "2024-09-25 19:24",
         "words": 23
       },
-      "tags": [
-        {
-          "tagId": "0e4a",
-          "tagName": "hi"
-        },
-        {
-          "tagId": "481d",
-          "tagName": "world"
-        }
-      ]
+      "tags": "<p>0e4a<p>481d<p>"
+    },
+    {
+      "id": "2c6e",
+      "content": "<p>asdasdf #love</p>",
+      "builtTime": "2024-09-26 09:02",
+      "statistics": {
+        "builtTime": "2024-09-26 09:02",
+        "updateTime": "2024-09-26 09:02",
+        "words": 13
+      },
+      "tags": "<p>fcf0<p>"
     }
   ],
   "tags": [
@@ -589,7 +541,7 @@
     {
       "id": "fcf0",
       "tagName": "love",
-      "cardCount": 1,
+      "cardCount": 2,
       "children": []
     },
     {

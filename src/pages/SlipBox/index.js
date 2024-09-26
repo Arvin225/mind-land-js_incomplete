@@ -1,6 +1,6 @@
-import { Flex } from "antd"
+import { Dropdown, Flex } from "antd"
 import SlipEditor from "./components/SlipEditor";
-import { fetchGetCards, fetchGetTags } from "@/store/modules/slipBoxStore";
+import { fetchGetCards, fetchGetTags, setCards } from "@/store/modules/slipBoxStore";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
@@ -9,8 +9,8 @@ import PathBar from "./components/PathBar";
 import SortMenu from "./components/SortMenu";
 import RightSider from "./components/RightSider";
 import SearchBar from "./components/SearchBar";
-import _, { } from "lodash";
-import { getTagAPI, getTagByTagNameAPI, patchTagAPI, postCardAPI, postTagAPI } from "@/apis/slipBox";
+import _, { uniq } from "lodash";
+import { getCardsAPI, getTagAPI, getTagByTagNameAPI, patchTagAPI, postCardAPI, postTagAPI } from "@/apis/slipBox";
 import { Bounce, toast, ToastContainer } from "react-toastify";
 import dayjs from "dayjs";
 import { compile } from "html-to-text";
@@ -89,7 +89,7 @@ function SlipBox() {
                         try {
                             await patchTagAPI(tag)
                             // 如果是叶子标签则收集到card的标签数组
-                            i === splitNames.length && cardTags.push({ tagId: tag.id, tagName: tagName })
+                            i === splitNames.length && cardTags.push(tag.id)
 
                             // 当第一个满足‘存在’的标签修改完成后，将cid置为空，后续父级标签便不再添加孩子
                             cid = ''
@@ -108,7 +108,7 @@ function SlipBox() {
                             const res = await getTagByTagNameAPI(tagName)
                             const id = await res.data[0].id
                             // 如果是叶子标签则收集到card的标签数组
-                            i === splitNames.length && cardTags.push({ tagId: id, tagName: tagName })
+                            i === splitNames.length && cardTags.push(id)
                             // 1.1.2.1 得到其id，存放到cid，遍历上一级标签时添加 
                             cid = id
                         } catch (error) {
@@ -239,17 +239,58 @@ function SlipBox() {
         }
     }
 
-    // 处理标签树的选中
+    // 处理标签树标签的选中
     const handleTagSelected = (keys) => {
         const tagId = keys[0]
         if (!tagId) {
+            // 拉取全部卡片
+            dispatch(fetchGetCards())
+            // 更新路径栏
             buildPathItems('')
             return
         }
-        getTagAPI(tagId).then(res => {
-            const tagName = res.data.tagName
+        getTagAPI(tagId).then(async res => {
+            // 1.拉取所选标签的及其后代标签的卡片更新store
+            const tag = res.data
+            // 收集当前标签及其后代标签的id
+            const allTagId = [tagId]
+            // 孩子标签
+            allTagId.push(...tag.children)
+            // todo 后代标签
+
+
+            // 获取卡片
+            const promiseList = []
+            for (let i = 0; i < allTagId.length; i++) {
+                const tagId = allTagId[i];
+                promiseList.push(await getCardsAPI(tagId)) //! 无法_like模糊匹配
+            }
+            const allCard = []
+            Promise.all(promiseList).then(resList => {
+                resList.forEach(res => {
+                    allCard.push(...res.data)
+                })
+
+                const uniqAllCard = []
+                // 有后代标签则对卡片去重（同一张卡片有可能既有当前标签又有后代标签，会被查出多次）
+                resList.length > 1
+                    ? uniqAllCard.push(...(_.uniqBy(allCard, 'id')))
+                    : uniqAllCard.push(...allCard)
+
+                // 更新store-cards
+                dispatch(setCards(uniqAllCard))
+
+            }).catch(error => {
+                toast.error('操作失败，请稍后重试')
+                console.error('Error: ', error);
+            })
+
+            // 2.更新路径栏
+            const tagName = tag.tagName
             buildPathItems(tagName)
+
         }).catch(error => {
+            toast.error('操作失败，请稍后重试')
             console.error('Error: ', error);
         })
     }
@@ -264,6 +305,14 @@ function SlipBox() {
     // 初始化标记
     const tags_ = tags.map(tag => ({ ...tag, TreeBuildAccomplished: false }))
 
+    // 标签项菜单
+    const tagMenuItems = [
+        { label: '置顶', key: 'pin', style: { color: '#6d6d6d' } },
+        { label: '重命名', key: 'rename', style: { color: '#6d6d6d' } },
+        { type: 'divider' },
+        { label: '仅移除标签', key: 'delete', style: { color: '#e47571' } },
+        { label: '删除标签和卡片', key: 'deleteOverCards', style: { color: '#e47571' } }
+    ]
 
     // 构建标签树的函数
     function buildTagTree(tag) {
@@ -293,7 +342,17 @@ function SlipBox() {
 
             // 业务逻辑
             return ({
-                title: _.last(tag.tagName.split('/')),
+                title:
+                    <Dropdown
+                        menu={{
+                            items: tagMenuItems,
+                            onClick: e => { e.domEvent.stopPropagation() },
+                            style: { backgroundColor: '#454545' }
+                        }}
+                        trigger={['contextMenu']}
+                        overlayStyle={{ width: 128.18 }}>
+                        <span>{_.last(tag.tagName.split('/'))}<span style={{ float: 'inline-end' }}>{'...'}</span></span>
+                    </Dropdown>,
                 key: tag.id,
                 icon: '#',
                 children: childNodes
@@ -302,7 +361,17 @@ function SlipBox() {
             // 无孩子（临界值处理）：叶子节点直接返回
             tag.TreeBuildAccomplished = true // 标记为已构建
             return ({
-                title: _.last(tag.tagName.split('/')),
+                title: // fixme icon与title不在一行
+                    <Dropdown
+                        menu={{
+                            items: tagMenuItems,
+                            onClick: e => { e.domEvent.stopPropagation() },
+                            style: { backgroundColor: '#454545' }
+                        }}
+                        trigger={['contextMenu']}
+                        overlayStyle={{ width: 128.18 }}>
+                        <span>{_.last(tag.tagName.split('/'))}<span style={{ float: 'inline-end' }}>{'...'}</span></span>
+                    </Dropdown>,
                 key: tag.id,
                 icon: '#',
                 isLeaf: true

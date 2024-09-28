@@ -354,207 +354,408 @@
   ],
   "cards": [
     {
-      "id": "1",
-      "content": "基于网络的应用程序采用React或Angular等技术，移动应用程序采用React Native或Flutter等技术，是构建跨平台应用程序的热门选择。对于桌面应用，Electron是一个流行的框架，它允许你用网络技术创建跨平台的桌面应用。",
-      "builtTime": "2024-09-21 12:00",
+      "id": "1be2",
+      "content": "<p>Java开启一个线程后，JVM会为其分配一个Java虚拟机栈，栈里面有栈帧，栈帧里面包含方法执行时的局部变量、方法参数、返回地址等</p><p>#Java/JVM</p><p>#Java/JUC</p>",
+      "builtTime": "2024-09-28 15:28",
       "statistics": {
-        "builtTime": "2024-9-21 12:00",
-        "updateTime": "2024-9-21 12:00",
-        "words": "128"
+        "builtTime": "2024-09-28 15:28",
+        "updateTime": "2024-09-28 15:28",
+        "words": 85
       },
-      "tags": "<p>1<p>"
+      "tags": [
+        "f545",
+        "da37"
+      ]
     },
     {
-      "id": "2",
-      "content": "对于分阶段的任务，有多少阶段就配置多少种线程池，否则容易产生饥饿现象",
-      "builtTime": "2024-09-21 12:00",
+      "id": "1d3c",
+      "content": "<p>Java开启一个线程后，JVM会为其分配一个Java虚拟机栈，栈里面有栈帧，栈帧里面包含方法执行时的局部变量、方法参数、返回地址等</p><p>#Java/JVM</p><p>#Java/JUC</p>",
+      "builtTime": "2024-09-28 15:29",
       "statistics": {
-        "builtTime": "2024-9-21 12:00",
-        "updateTime": "2024-9-21 12:00",
-        "words": "44"
+        "builtTime": "2024-09-28 15:29",
+        "updateTime": "2024-09-28 15:29",
+        "words": 85
       },
-      "tags": "<p>2<p>3<p>"
+      "tags": [
+        "f545",
+        "da37"
+      ]
     },
     {
-      "id": "3",
-      "content": "原子类的内部是用Unsafe类实现各种原子的操作，而Unsafe结合了CAS技术，且其对对象属性值的修改需要借助该属性相对于所属对象在内存中的偏移量offset，同时由于CAS的性质，该属性需要用volatile修饰，防止JIT对其缓存优化",
-      "builtTime": "2024-09-21 12:00",
+      "id": "491c",
+      "content": "<p>原子类的内部是用Unsafe类实现各种原子的操作，而Unsafe结合了CAS技术，且其对对象属性值的修改需要借助该属性相对于所属对象在内存中的偏移量offset，同时由于CAS的性质，该属性需要用volatile修饰，防止JIT对其缓存优化</p><p>#Java/JUC </p>",
+      "builtTime": "2024-09-28 15:30",
       "statistics": {
-        "builtTime": "2024-9-21 12:00",
-        "updateTime": "2024-9-21 12:00",
-        "words": "130"
+        "builtTime": "2024-09-28 15:30",
+        "updateTime": "2024-09-28 15:30",
+        "words": 131
       },
-      "tags": "<p>2<p>"
+      "tags": [
+        "da37"
+      ]
     },
     {
-      "id": "7aad",
-      "content": "<p>Java开启一个线程后，JVM会为其分配一个Java虚拟机栈，栈里面有栈帧，栈帧里面包含方法执行时的局部变量、方法参数、返回地址等</p><ul><li>#Java/JVM</li></ul><p>变量、方法参数、返回地址等 #test</p><ol><li>#Java/JUC <strong>#Thread</strong></li></ol>",
-      "builtTime": "2024-09-25 15:13",
+      "id": "02c5",
+      "content": "<p>#Java/SpringBoot</p><p>SpringBoot整合第三方技术：</p><ol><li>引入starter依赖</li><li>yml中配置（有些不用）</li><li>添加配置类（有些不用）</li></ol>",
+      "builtTime": "2024-09-28 15:30",
       "statistics": {
-        "builtTime": "2024-09-25 15:13",
-        "updateTime": "2024-09-25 15:13",
-        "words": 113
+        "builtTime": "2024-09-28 15:30",
+        "updateTime": "2024-09-28 15:30",
+        "words": 72
       },
-      "tags": "<p>019e<p>a928<p>2<p>c564<p>"
+      "tags": [
+        "f43b"
+      ]
     },
     {
-      "id": "ee27",
-      "content": "<p>this is a test #toslipbox cool #love xahsdva #toslipbox</p><ul><li>this is a test #toslipbox cool#love</li></ul><p><br></p>",
-      "builtTime": "2024-09-25 15:24",
+      "id": "e4eb",
+      "content": "<p>#论文/CNN/局部感知</p><p>以前用一个神经元学习一个特征（全连接网络），现在用多个神经元学习一个特征（卷积网络），这里每个神经元只学习某个局部上的特征，最后整合成一个完整的特征。为何这样做，因为构成图像的像素之间，局部区域内像素的相关性会更高，相距较远的像素之间相关性较弱</p>",
+      "builtTime": "2024-09-28 15:36",
       "statistics": {
-        "builtTime": "2024-09-25 15:24",
-        "updateTime": "2024-09-25 15:24",
-        "words": 92
+        "builtTime": "2024-09-28 15:36",
+        "updateTime": "2024-09-28 15:36",
+        "words": 135
       },
-      "tags": "<p>c977<p>fcf0<p>"
+      "tags": [
+        "93d1"
+      ]
     },
     {
-      "id": "6195",
-      "content": "<p>saacsgf #test</p>",
-      "builtTime": "2024-09-25 15:59",
+      "id": "8fe8",
+      "content": "<p>#论文/CNN/发展 </p><p>在2006年深度学习理论被提出后 [20] &nbsp;，卷积神经网络的表征学习能力得到了关注，并随着数值计算设备的更新得到发展 [2] &nbsp;。</p>",
+      "builtTime": "2024-09-28 15:40",
       "statistics": {
-        "builtTime": "2024-09-25 15:59",
-        "updateTime": "2024-09-25 15:59",
-        "words": 13
+        "builtTime": "2024-09-28 15:40",
+        "updateTime": "2024-09-28 15:40",
+        "words": 78
       },
-      "tags": "<p>a928<p>"
+      "tags": [
+        "41ad"
+      ]
     },
     {
-      "id": "a99b",
-      "content": "<p>nasjdhhnxcza #hi #world</p>",
-      "builtTime": "2024-09-25 19:24",
+      "id": "66ed",
+      "content": "<p>#论文/CNN/权值共享</p><p>由于输出特征图中的元素是用同一组卷积核作用于不同的局部区域得到的，可以说卷积核内的参数被卷积层中的神经元共享，即权值共享。</p>",
+      "builtTime": "2024-09-28 15:40",
       "statistics": {
-        "builtTime": "2024-09-25 19:24",
-        "updateTime": "2024-09-25 19:24",
-        "words": 23
+        "builtTime": "2024-09-28 15:40",
+        "updateTime": "2024-09-28 15:40",
+        "words": 74
       },
-      "tags": "<p>0e4a<p>481d<p>"
+      "tags": [
+        "3fe1"
+      ]
     },
     {
-      "id": "2c6e",
-      "content": "<p>asdasdf #love</p>",
-      "builtTime": "2024-09-26 09:02",
+      "id": "2c89",
+      "content": "<p>#论文/CNN/下采样 </p><p>卷积层后边会连接池化层进行降采样操作，一方面可以降低图像的分辨率，减少参数量，另一方面可以获得平移和形变的鲁棒性。</p>",
+      "builtTime": "2024-09-28 15:40",
       "statistics": {
-        "builtTime": "2024-09-26 09:02",
-        "updateTime": "2024-09-26 09:02",
-        "words": 13
+        "builtTime": "2024-09-28 15:40",
+        "updateTime": "2024-09-28 15:40",
+        "words": 70
       },
-      "tags": "<p>fcf0<p>"
+      "tags": [
+        "e1f1"
+      ]
+    },
+    {
+      "id": "2fe4",
+      "content": "<p>#论文/CNN/优势与劣势 </p><p>优点</p><p> &nbsp; &nbsp;① 使用局部感知和参数共享机制（共享卷积核）, 对于较大的数据集处理能力较高.对高维数据的处理没有压力</p><p> &nbsp; &nbsp;② 能够提取图像的深层次的信息,模型表达效果好.</p><p> &nbsp; &nbsp;③ 不需要手动进行特征选择, 只要训练好卷积核W和偏置项b, 即可得到特征值.</p><p>缺点</p><p> &nbsp; &nbsp;① 需要进行调参, 模型训练时间较长, 需要的样本较多, 一般建议使用GPU进行模型训练.</p><p> &nbsp; &nbsp;② 物理含义不明, 每层中的结果无法解释, 这也是神经网络的共有的缺点. </p>",
+      "builtTime": "2024-09-28 15:40",
+      "statistics": {
+        "builtTime": "2024-09-28 15:40",
+        "updateTime": "2024-09-28 15:40",
+        "words": 241
+      },
+      "tags": [
+        "7283"
+      ]
+    },
+    {
+      "id": "3db3",
+      "content": "<p>#论文/CNN/优势与劣势 </p><p>卷积神经网络具有三个特征：局部感知，参数共享和下采样。基于这三个特点，卷积神经网络在<u>提取图像特征方面比其他模型有更好的结果</u>。</p>",
+      "builtTime": "2024-09-28 15:40",
+      "statistics": {
+        "builtTime": "2024-09-28 15:40",
+        "updateTime": "2024-09-28 15:40",
+        "words": 77
+      },
+      "tags": [
+        "7283"
+      ]
+    },
+    {
+      "id": "dea7",
+      "content": "<p>激活函数的主要作用是加入非线性因素，解决线性模型的表达、分类能力不足的问题。</p><p><br></p><p>https://blog.csdn.net/dcrmg/article/details/73743742#/</p><p><br></p><p>#论文/激活函数</p>",
+      "builtTime": "2024-09-28 15:40",
+      "statistics": {
+        "builtTime": "2024-09-28 15:40",
+        "updateTime": "2024-09-28 15:40",
+        "words": 104
+      },
+      "tags": [
+        "abce"
+      ]
+    },
+    {
+      "id": "af61",
+      "content": "<p>link：https://blog.csdn.net/fendouaini/article/details/79788106</p><p>title：(44条消息) 深度学习发展史_TensorFlowNews-CSDN博客_深度学习发展</p><p><br></p><p>#论文/深度学习 &nbsp;深度学习的发展</p>",
+      "builtTime": "2024-09-28 15:41",
+      "statistics": {
+        "builtTime": "2024-09-28 15:41",
+        "updateTime": "2024-09-28 15:41",
+        "words": 132
+      },
+      "tags": [
+        "7d96"
+      ]
+    },
+    {
+      "id": "d198",
+      "content": "<p>深度学习模型通过模拟人类大脑的神经连接结构,在处理图像、声音和文本信息时,利用多阶段变换对数据特征进行分层描述,以组合低层特征形成更加抽象的高层表示。</p><p><br></p><p>https://qa.cnki.net/web/query?q=%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%90%86%E8%AE%BA</p><p><br></p><p>#论文/深度学习 </p>",
+      "builtTime": "2024-09-28 15:41",
+      "statistics": {
+        "builtTime": "2024-09-28 15:41",
+        "updateTime": "2024-09-28 15:41",
+        "words": 174
+      },
+      "tags": [
+        "7d96"
+      ]
+    },
+    {
+      "id": "d968",
+      "content": "<p>隐含层的层数和每层神经元的个数都是超参数</p><p><br></p><p>https://zhuanlan.zhihu.com/p/43285366#/</p><p><br></p><p>#论文/隐藏层 </p>",
+      "builtTime": "2024-09-28 15:41",
+      "statistics": {
+        "builtTime": "2024-09-28 15:41",
+        "updateTime": "2024-09-28 15:41",
+        "words": 71
+      },
+      "tags": [
+        "f86c"
+      ]
+    },
+    {
+      "id": "a274",
+      "content": "<p>#论文/CNN/核心思想 </p><p>卷积神经网络的核心思想就是局部感受野、是权值共享和pooling层，以此来达到<strong>简化网络参数</strong>并使得网络具有一定程度的<strong>位移、尺度、缩放、非线性形变稳定性</strong>。</p>",
+      "builtTime": "2024-09-28 15:45",
+      "statistics": {
+        "builtTime": "2024-09-28 15:45",
+        "updateTime": "2024-09-28 15:45",
+        "words": 89
+      },
+      "tags": [
+        "4364"
+      ]
+    },
+    {
+      "id": "f488",
+      "content": "<p>桶排序、计数排序、基数排序：</p><ul><li>它们都属于将数据映射到有序范围的排序算法</li><li>利用了索引天然有序的特性，因此很少进行值比较或者完全不用值比较（计数、基数排序）</li></ul><p>#CS/DS&A/Sorting </p>",
+      "builtTime": "2024-09-28 16:02",
+      "statistics": {
+        "builtTime": "2024-09-28 16:02",
+        "updateTime": "2024-09-28 16:02",
+        "words": 94
+      },
+      "tags": [
+        "d037"
+      ]
     }
   ],
   "tags": [
     {
-      "id": "1",
-      "tagName": "AppDev",
-      "cardCount": 1,
-      "children": []
-    },
-    {
-      "id": "3",
-      "tagName": "Java",
-      "cardCount": 3,
-      "children": [
-        "2",
-        "019e"
-      ]
-    },
-    {
-      "id": "2",
-      "tagName": "Java/JUC",
-      "cardCount": 3,
-      "children": []
-    },
-    {
-      "id": "4",
-      "tagName": "hello",
-      "cardCount": 1,
-      "children": [
-        "5",
-        "6"
-      ]
-    },
-    {
-      "id": "5",
-      "tagName": "hello/world",
-      "cardCount": 1,
-      "children": [
-        "7",
-        "8"
-      ]
-    },
-    {
-      "id": "6",
-      "tagName": "hello/JS",
-      "cardCount": 1,
-      "children": [
-        "9"
-      ]
-    },
-    {
-      "id": "7",
-      "tagName": "hello/world/china",
-      "cardCount": 1,
-      "children": []
-    },
-    {
-      "id": "8",
-      "tagName": "hello/world/america",
-      "cardCount": 1,
-      "children": []
-    },
-    {
-      "id": "9",
-      "tagName": "hello/JS/TS",
-      "cardCount": 1,
-      "children": []
-    },
-    {
-      "id": "10",
-      "tagName": "JS",
-      "cardCount": 1,
-      "children": []
-    },
-    {
-      "id": "019e",
+      "id": "f545",
       "tagName": "Java/JVM",
-      "cardCount": 1,
-      "children": []
-    },
-    {
-      "id": "a928",
-      "tagName": "test",
+      "children": [],
       "cardCount": 2,
-      "children": []
+      "cards": [
+        "1be2",
+        "1d3c"
+      ],
+      "parent": "72c4"
     },
     {
-      "id": "c564",
-      "tagName": "Thread",
+      "id": "72c4",
+      "tagName": "Java",
+      "children": [
+        "f545",
+        "da37",
+        "f43b"
+      ],
+      "cardCount": 4,
+      "cards": []
+    },
+    {
+      "id": "da37",
+      "tagName": "Java/JUC",
+      "children": [],
+      "cardCount": 3,
+      "cards": [
+        "1be2",
+        "1d3c",
+        "491c"
+      ],
+      "parent": "72c4"
+    },
+    {
+      "id": "f43b",
+      "tagName": "Java/SpringBoot",
+      "children": [],
       "cardCount": 1,
-      "children": []
+      "cards": [
+        "02c5"
+      ],
+      "parent": "72c4"
     },
     {
-      "id": "c977",
-      "tagName": "toslipbox",
+      "id": "93d1",
+      "tagName": "论文/CNN/局部感知",
+      "children": [],
       "cardCount": 1,
-      "children": []
+      "cards": [
+        "e4eb"
+      ],
+      "parent": "2276"
     },
     {
-      "id": "fcf0",
-      "tagName": "love",
+      "id": "2276",
+      "tagName": "论文/CNN",
+      "children": [
+        "93d1",
+        "41ad",
+        "3fe1",
+        "e1f1",
+        "7283",
+        "4364"
+      ],
+      "cardCount": 7,
+      "cards": [],
+      "parent": "7999"
+    },
+    {
+      "id": "7999",
+      "tagName": "论文",
+      "children": [
+        "2276",
+        "abce",
+        "7d96",
+        "f86c"
+      ],
+      "cardCount": 11,
+      "cards": []
+    },
+    {
+      "id": "41ad",
+      "tagName": "论文/CNN/发展",
+      "children": [],
+      "cardCount": 1,
+      "cards": [
+        "8fe8"
+      ],
+      "parent": "2276"
+    },
+    {
+      "id": "3fe1",
+      "tagName": "论文/CNN/权值共享",
+      "children": [],
+      "cardCount": 1,
+      "cards": [
+        "66ed"
+      ],
+      "parent": "2276"
+    },
+    {
+      "id": "e1f1",
+      "tagName": "论文/CNN/下采样",
+      "children": [],
+      "cardCount": 1,
+      "cards": [
+        "2c89"
+      ],
+      "parent": "2276"
+    },
+    {
+      "id": "7283",
+      "tagName": "论文/CNN/优势与劣势",
+      "children": [],
       "cardCount": 2,
-      "children": []
+      "cards": [
+        "2fe4",
+        "3db3"
+      ],
+      "parent": "2276"
     },
     {
-      "id": "0e4a",
-      "tagName": "hi",
-      "cardCount": 3,
-      "children": []
+      "id": "abce",
+      "tagName": "论文/激活函数",
+      "children": [],
+      "cardCount": 1,
+      "cards": [
+        "dea7"
+      ],
+      "parent": "7999"
     },
     {
-      "id": "481d",
-      "tagName": "world",
-      "cardCount": 3,
-      "children": []
+      "id": "7d96",
+      "tagName": "论文/深度学习",
+      "children": [],
+      "cardCount": 2,
+      "cards": [
+        "af61",
+        "d198"
+      ],
+      "parent": "7999"
+    },
+    {
+      "id": "f86c",
+      "tagName": "论文/隐藏层",
+      "children": [],
+      "cardCount": 1,
+      "cards": [
+        "d968"
+      ],
+      "parent": "7999"
+    },
+    {
+      "id": "4364",
+      "tagName": "论文/CNN/核心思想",
+      "children": [],
+      "cardCount": 1,
+      "cards": [
+        "a274"
+      ],
+      "parent": "2276"
+    },
+    {
+      "id": "d037",
+      "tagName": "CS/DS&A/Sorting",
+      "children": [],
+      "cardCount": 1,
+      "cards": [
+        "f488"
+      ],
+      "parent": "8803"
+    },
+    {
+      "id": "8803",
+      "tagName": "CS/DS&A",
+      "children": [
+        "d037"
+      ],
+      "cardCount": 1,
+      "cards": [],
+      "parent": "a738"
+    },
+    {
+      "id": "a738",
+      "tagName": "CS",
+      "children": [
+        "8803"
+      ],
+      "cardCount": 1,
+      "cards": []
     }
   ]
 }

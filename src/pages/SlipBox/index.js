@@ -1,7 +1,7 @@
 import { Dropdown, Flex } from "antd"
 import SlipEditor from "./components/SlipEditor";
 import { fetchGetCards, fetchGetTags, setCards } from "@/store/modules/slipBoxStore";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import CardList from "./components/CardList";
@@ -9,8 +9,8 @@ import PathBar from "./components/PathBar";
 import SortMenu from "./components/SortMenu";
 import RightSider from "./components/RightSider";
 import SearchBar from "./components/SearchBar";
-import _, { uniq } from "lodash";
-import { getCardsAPI, getTagAPI, getTagByTagNameAPI, patchTagAPI, postCardAPI, postTagAPI } from "@/apis/slipBox";
+import _ from "lodash";
+import { getCardAPI, getCardsAPI, getTagAPI, getTagByTagNameAPI, patchTagAPI, postCardAPI, postTagAPI } from "@/apis/slipBox";
 import { Bounce, toast, ToastContainer } from "react-toastify";
 import dayjs from "dayjs";
 import { compile } from "html-to-text";
@@ -59,73 +59,106 @@ function SlipBox() {
             // 按空格分离
             // const probTagNames = contentWithText.split(' ') 
 
-            // 过滤并去重出标签
-            const tagNames = _.uniq(probTagNames.filter(item => _.startsWith(item, '#')))
+            // 过滤去重出标签
+            const tagNames = _.uniq(probTagNames.filter(item => _.startsWith(item, '#') && item !== '#'))
 
-            // 定义card的标签数组，标签存放结束后该数组也收集完毕
+            // 定义card的标签数组，标签存库结束后该数组也收集完毕
             const cardTags = []
+            // 定义叶子标签数组，标签存库结束后该数组也收集完毕
+            const leafTags = []
 
             // 保存标签到数据库的函数
             async function saveTag(name) {
                 // 1.1 判断当前标签及其祖先标签是否存在
                 const splitNames = name.split('/') // 去除“#”再按“/”分割
                 let cid
-                for (let i = splitNames.length; i > 0; i--) {
-                    const tagName = splitNames.slice(0, i).join('/') // 取前i个分割的name以“/”组成各父级标签的tagName（或当前标签的tagName）
+                try {
+                    for (let i = splitNames.length; i > 0; i--) {
+                        const tagName = splitNames.slice(0, i).join('/') // 取前i个分割的name以“/”组成各父级标签的tagName（或当前标签的tagName）
 
-                    let tag
-                    try {
-                        // 数据库查询该标签
-                        const res = await getTagByTagNameAPI(tagName)
-                        tag = await res.data[0]
-                    } catch (error) {
-                        toast.error('提交失败，请稍后重试')
-                        console.error('Error: ', error)
-                    }
-
-                    // 1.1.1 存在则将cid添加到children（如果为叶子标签则cid为空）
-                    if (tag) {
-                        cid && tag.children.push(cid) // 不是叶子标签时添加下一级标签的id到children
+                        let tag
                         try {
-                            await patchTagAPI(tag)
-                            // 如果是叶子标签则收集到card的标签数组
-                            i === splitNames.length && cardTags.push(tag.id)
+                            // 数据库查询该标签 //todo 或许数据库拉取所有tag（或store里保存的所有tag）再比对会更规范些？
+                            const res = await getTagByTagNameAPI(tagName)
+                            console.log(`查询tag：${tagName}`, res);
 
-                            // 当第一个满足‘存在’的标签修改完成后，将cid置为空，后续父级标签便不再添加孩子
-                            cid = ''
+                            tag = await res.data[0]
                         } catch (error) {
                             toast.error('提交失败，请稍后重试')
                             console.error('Error: ', error)
                         }
 
-                        // 1.1.2 不存在则创建（将cardCount置为0，将cid添加到children）
-                    } else {
-                        try {
-                            const newTag = { tagName: tagName, cardCount: 0, children: [] }
-                            cid && (newTag.children = [cid])
-                            await postTagAPI(newTag)
-                            // 再查回来 // todo 暂时这样写，后续后端实现回传
-                            const res = await getTagByTagNameAPI(tagName)
-                            const id = await res.data[0].id
-                            // 如果是叶子标签则收集到card的标签数组
-                            i === splitNames.length && cardTags.push(id)
-                            // 1.1.2.1 得到其id，存放到cid，遍历上一级标签时添加 
-                            cid = id
-                        } catch (error) {
-                            toast.error('提交失败，请稍后重试')
-                            console.error(`${tagName} Error: `, error)
+                        // 1.1.1 存在则将cid添加到children（如果为叶子标签则cid为空）
+                        if (tag) {
+                            // 存在的是叶子标签则收集到cardTags和leafTags就好了
+                            if (!cid) {
+                                cardTags.push(tag.id)
+                                leafTags.push(tag)
+                                // 不再向前遍历
+                                return
+                            }
+
+                            // 不是叶子标签时添加子标签的id到children属性中
+                            tag.children.push(cid)
+                            try {
+                                // 将当前标签的 id 设置到子标签的 parent 属性中
+                                await patchTagAPI({ id: cid, parent: tag.id })
+                                // 将修改保存到数据库
+                                await patchTagAPI(tag)
+
+                                // 不再向前遍历
+                                return
+                            } catch (error) {
+                                toast.error('提交失败，请稍后重试')
+                                console.error('Error: ', error)
+                            }
+
+                            // 1.1.2 不存在则创建（将cardCount置为0，将子标签的id添加到children，将当前标签的id设置到子标签的parent中）
+                        } else {
+                            try {
+                                const newTag = { tagName: tagName, children: [], cardCount: 0, cards: [] }
+                                // 非叶子标签则将子标签的id添加到children属性中
+                                cid && (newTag.children.push(cid))
+                                // 新增到数据库
+                                const res = await postTagAPI(newTag)
+
+                                console.log('tag新增的回传', res);
+
+                                const tag = await res.data
+                                const id = await tag.id
+
+                                // 将当前标签的 id 设置到子标签的 parent 属性中
+                                cid && await patchTagAPI({ id: cid, parent: id })
+
+                                // 如果是叶子标签则收集到cardTags和leafTags
+                                if (!cid) {
+                                    cardTags.push(id)
+                                    leafTags.push(tag)
+                                }
+
+                                // 1.1.2.1 将当前标签的id存放到cid 
+                                cid = id
+                                /* // 再查回来 
+                                const res = await getTagByTagNameAPI(tagName) */
+                            } catch (error) {
+                                toast.error('提交失败，请稍后重试')
+                                console.error(`${tagName} Error: `, error)
+                            }
                         }
                     }
+                } catch (error) {
+                    toast.error('提交失败，请稍后重试')
+                    console.error('For loop splitNames error', error)
                 }
             }
 
-            // 修改标签的cardCount+1的函数
+            // 修改标签的 cardCount + 1 的函数
             async function plusCardCount(uniqAllTagNames) {
                 const promiseList = [];
                 for (let i = 0; i < uniqAllTagNames.length; i++) {
                     const name = uniqAllTagNames[i];
                     // 获取当前标签
-                    promiseList.push(await getTagByTagNameAPI(name));
+                    promiseList.push(await getTagByTagNameAPI(name)); //todo 或许可以saveTag里先收集tag再按id去重，或许直接遍历去重后的tags就好了，这里getTag就不需要了
                 }
                 /* uniqAllTagNames.forEach(async name => {
                     // 获取当前标签
@@ -152,10 +185,10 @@ function SlipBox() {
                 });
             }
 
-            // 保存card的函数
+            // 保存 card 的函数
             async function saveCard(contentWithHtml, contentWithText, cardTags) {
                 const currentDateTime = dayjs().format('YYYY-MM-DD HH:mm'); // 格式化当前时间
-                return postCardAPI(
+                return await postCardAPI(
                     {
                         content: contentWithHtml,
                         builtTime: currentDateTime,
@@ -193,12 +226,22 @@ function SlipBox() {
                 } */
             }
 
+            // 将新增的 card 的 id 添加到叶子标签中的函数
+            async function addCardIdIntoTag(tags, cardId) {
+                const promiseList = []
+                for (let i = 0; i < tags.length; i++) {
+                    const tag = tags[i];
+                    promiseList.push(await patchTagAPI({ id: tag.id, cards: [...tag.cards, cardId] }))
+                }
+                return Promise.all(promiseList)
+            }
+
             const uniqAllTagNames = []
             const preTagNames = []
             // 1.遍历标签，将标签存到tags表
             for (let i = 0; i < tagNames.length; i++) {
                 const name = tagNames[i].slice(1) // 去除“#”
-                // 将标签保存到tags表（无计数）
+                // 将标签保存到tags表（不计数）
                 await saveTag(name)
 
                 // 收集去除“#”的叶子标签
@@ -217,21 +260,27 @@ function SlipBox() {
             // 2.1 提交cardCount+1
             plusCardCount(uniqAllTagNames).then(async resList => {
                 // 3.将id与html文本一起存到cards表
-                saveCard(contentWithHtml, contentWithText, cardTags).then(res => {
-                    // 4.更新store (cards、tags) 
-                    // 更新store-tags
-                    dispatch(fetchGetTags());
-                    // todo 判断添加的card的tag是否是在当前路径下，是则拉取cards
-                    dispatch(fetchGetCards());
-                    // 清空输入框
-                    editor.clear();
+                saveCard(contentWithHtml, contentWithText, cardTags).then(async res => {
+                    // 4.将当前卡片的id保存到其所有叶子标签中
+                    addCardIdIntoTag(leafTags, res.data.id).then(resList => {
+                        // 5.更新store (cards、tags) 
+                        // 更新store-tags
+                        dispatch(fetchGetTags());
+                        // todo 判断添加的card的tag是否是在当前路径下，是则拉取cards
+                        dispatch(fetchGetCards());
+                        // 6.清空输入框
+                        editor.clear();
+                    }).catch(error => {
+                        toast.error('提交失败，请稍后重试')
+                        console.error('addCardIdIntoTag Error: ', error);
+                    })
                 }).catch(error => {
                     toast.error('提交失败，请稍后重试')
-                    console.error('Error: ', error);
+                    console.error('saveCard Error: ', error);
                 })
             }).catch(error => {
                 toast.error('提交失败，请稍后重试')
-                console.error('Error: ', error);
+                console.error('plusCardCount Error: ', error);
             })
 
 
@@ -239,8 +288,32 @@ function SlipBox() {
         }
     }
 
+
+    // 获取标签及其后代标签的卡片id，返回卡片id数组
+    function getCardIdsByTagAndOffspring(tag) {
+        if (!tag) return []
+
+        // 初始化数组
+        const tagAndOffspringCards = [...tag.cards]
+
+        // 获取children
+        const children = tag.children
+        // 递归终止条件：children为空
+        children.forEach(cid => {
+            const ctag = tags.find(tag => tag.id === cid) //todo 或许从数据库查会更安全一致
+            if (!ctag) {
+                console.warn('找不到该标签：', cid)
+                return []
+            }
+            // 业务逻辑：收集后代标签的card
+            tagAndOffspringCards.push(...getCardIdsByTagAndOffspring(ctag)) // 递归
+        })
+
+        return tagAndOffspringCards
+    }
+
     // 处理标签树标签的选中
-    const handleTagSelected = (keys) => {
+    const handleTagSelected = async (keys) => {
         const tagId = keys[0]
         if (!tagId) {
             // 拉取全部卡片
@@ -249,7 +322,41 @@ function SlipBox() {
             buildPathItems('')
             return
         }
-        getTagAPI(tagId).then(async res => {
+
+        const tag = tags.find(tag => tag.id === tagId)
+        if (!tag) {
+            console.warn('找不到该标签：', tagId)
+            return
+        }
+
+        // 获取该标签及其后代标签下的所有卡片id并去重
+        const allCardId = _.uniq(getCardIdsByTagAndOffspring(tag))
+
+        // 获取卡片
+        const promiseList = []
+        for (let i = 0; i < allCardId.length; i++) {
+            const cardId = allCardId[i];
+            promiseList.push(await getCardAPI(cardId))
+        }
+        const allCard = []
+        Promise.all(promiseList).then(resList => {
+            resList.forEach(res => {
+                allCard.push(res.data)
+            })
+
+            // 更新store-cards
+            dispatch(setCards(allCard))
+
+        }).catch(error => {
+            toast.error('操作失败，请稍后重试')
+            console.error('Error: ', error);
+        })
+
+        // 2.更新路径栏
+        const tagName = tag.tagName
+        buildPathItems(tagName)
+
+        /* getTagAPI(tagId).then(async res => { //todo 或许可以从store中查
             // 1.拉取所选标签的及其后代标签的卡片更新store
             const tag = res.data
             // 收集当前标签及其后代标签的id
@@ -292,7 +399,7 @@ function SlipBox() {
         }).catch(error => {
             toast.error('操作失败，请稍后重试')
             console.error('Error: ', error);
-        })
+        }) */
     }
 
 

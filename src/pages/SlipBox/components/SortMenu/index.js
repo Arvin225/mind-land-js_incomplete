@@ -20,7 +20,7 @@ function SortMenu() {
                 },
                 {
                     key: 'e-dec',
-                    label: '编辑时间升序'
+                    label: '编辑时间降序'
                 }],
                 selectable: true,
             }}

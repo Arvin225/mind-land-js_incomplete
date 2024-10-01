@@ -13,8 +13,11 @@
             ], */
             // 这里填入项目的访问地址
             "url": "http://localhost:3000",
-            "webRoot": "${workspaceFolder}",
+            "webRoot": "${workspaceFolder}/src",
             // "program": "${workspaceFolder}\\src\\pages\\SlipBox\\index.js"
+            "sourceMapPathOverrides": {
+                "webpack:///src/*": "${webRoot}/*"
+            }
         }
     ]
 }

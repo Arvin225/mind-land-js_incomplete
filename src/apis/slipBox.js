@@ -1,11 +1,11 @@
 import request from "@/utils/request";
 
 // 获取卡片们
-export function getCardsAPI(tagId) {
+export function getAllCardsAPI() {
     /* let tid
     tagId && (tid = '<p>'.concat(tagId.concat('<p>')))
     return request.get('/cards', { params: { tags_like: tid } }) */
-    return request.get('/cards', { params: { tagId: tagId } })
+    return request.get('/cards')
 }
 
 // 获取卡片
@@ -40,6 +40,16 @@ export function getTagByTagNameAPI(tagName) {
 }
 
 // 修改标签
-export function patchTagAPI({ id, tagName, parent, children, cardCount, cards }) {
-    return request.patch(`/tags/${id}`, { id, tagName, parent, children, cardCount, cards })
+export function patchTagAPI(tag) {
+    return request.patch(`/tags/${tag.id}`, tag)
+}
+
+// 修改卡片
+export function patchCardAPI(card) {
+    return request.patch(`/cards/${card.id}`, card)
+}
+
+// 删除标签
+export function deleteTagAPI(id) {
+    return request.delete(`/tags/${id}`)
 }

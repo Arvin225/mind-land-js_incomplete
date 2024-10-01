@@ -1,7 +1,7 @@
 import { Dropdown, Flex } from "antd"
 import SlipEditor from "./components/SlipEditor";
-import { fetchGetCards, fetchGetTags, setCards } from "@/store/modules/slipBoxStore";
-import { useEffect } from "react";
+import { fetchGetAllCards, fetchGetTags, setCards } from "@/store/modules/slipBoxStore";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import CardList from "./components/CardList";
@@ -10,17 +10,19 @@ import SortMenu from "./components/SortMenu";
 import RightSider from "./components/RightSider";
 import SearchBar from "./components/SearchBar";
 import _ from "lodash";
-import { getCardAPI, getCardsAPI, getTagAPI, getTagByTagNameAPI, patchTagAPI, postCardAPI, postTagAPI } from "@/apis/slipBox";
+import { getTagAPI, getTagByTagNameAPI, patchCardAPI, patchTagAPI, postCardAPI, postTagAPI } from "@/apis/slipBox";
 import { Bounce, toast, ToastContainer } from "react-toastify";
 import dayjs from "dayjs";
 import { compile } from "html-to-text";
 import usePathItems from "./hooks/usePathItems";
+import handleCardCountZero from "./functions/handleCardCountZero";
+import getCardsByTagId from "./functions/getCardsByTagId";
 
 function SlipBox() {
     const dispatch = useDispatch()
     const { pathItems, buildPathItems } = usePathItems()
     useEffect(() => {
-        dispatch(fetchGetCards())
+        dispatch(fetchGetAllCards())
         dispatch(fetchGetTags())
     }, [])
     // 得到cards、tags的loading状态
@@ -80,7 +82,6 @@ function SlipBox() {
                         try {
                             // 数据库查询该标签 //todo 或许数据库拉取所有tag（或store里保存的所有tag）再比对会更规范些？
                             const res = await getTagByTagNameAPI(tagName)
-                            console.log(`查询tag：${tagName}`, res);
 
                             tag = await res.data[0]
                         } catch (error) {
@@ -122,8 +123,6 @@ function SlipBox() {
                                 // 新增到数据库
                                 const res = await postTagAPI(newTag)
 
-                                console.log('tag新增的回传', res);
-
                                 const tag = await res.data
                                 const id = await tag.id
 
@@ -153,7 +152,7 @@ function SlipBox() {
             }
 
             // 修改标签的 cardCount + 1 的函数
-            async function plusCardCount(uniqAllTagNames) {
+            async function increaseCardCount(uniqAllTagNames) {
                 const promiseList = [];
                 for (let i = 0; i < uniqAllTagNames.length; i++) {
                     const name = uniqAllTagNames[i];
@@ -197,7 +196,8 @@ function SlipBox() {
                             updateTime: currentDateTime,
                             words: contentWithText.length
                         },
-                        tags: cardTags
+                        tags: cardTags,
+                        del: false
                     }
                 )
                 /* try {
@@ -258,7 +258,7 @@ function SlipBox() {
             // 合并去重后的叶子及父级标签
             uniqAllTagNames.push(...uniqPreTagNames)
             // 2.1 提交cardCount+1
-            plusCardCount(uniqAllTagNames).then(async resList => {
+            increaseCardCount(uniqAllTagNames).then(async resList => {
                 // 3.将id与html文本一起存到cards表
                 saveCard(contentWithHtml, contentWithText, cardTags).then(async res => {
                     // 4.将当前卡片的id保存到其所有叶子标签中
@@ -267,7 +267,7 @@ function SlipBox() {
                         // 更新store-tags
                         dispatch(fetchGetTags());
                         // todo 判断添加的card的tag是否是在当前路径下，是则拉取cards
-                        dispatch(fetchGetCards());
+                        dispatch(fetchGetAllCards());
                         // 6.清空输入框
                         editor.clear();
                     }).catch(error => {
@@ -282,79 +282,34 @@ function SlipBox() {
                 toast.error('提交失败，请稍后重试')
                 console.error('plusCardCount Error: ', error);
             })
-
-
-
         }
     }
 
 
-    // 获取标签及其后代标签的卡片id，返回卡片id数组
-    function getCardIdsByTagAndOffspring(tag) {
-        if (!tag) return []
-
-        // 初始化数组
-        const tagAndOffspringCards = [...tag.cards]
-
-        // 获取children
-        const children = tag.children
-        // 递归终止条件：children为空
-        children.forEach(cid => {
-            const ctag = tags.find(tag => tag.id === cid) //todo 或许从数据库查会更安全一致
-            if (!ctag) {
-                console.warn('找不到该标签：', cid)
-                return []
-            }
-            // 业务逻辑：收集后代标签的card
-            tagAndOffspringCards.push(...getCardIdsByTagAndOffspring(ctag)) // 递归
-        })
-
-        return tagAndOffspringCards
-    }
-
+    const [selectedKey, setSelectedKey] = useState('')
     // 处理标签树标签的选中
     const handleTagSelected = async (keys) => {
         const tagId = keys[0]
+        // 手动设置选中
+        setSelectedKey(tagId)
+
+        // 选中的是全部卡片则：
         if (!tagId) {
             // 拉取全部卡片
-            dispatch(fetchGetCards())
+            dispatch(fetchGetAllCards())
             // 更新路径栏
             buildPathItems('')
             return
         }
 
-        const tag = tags.find(tag => tag.id === tagId)
-        if (!tag) {
-            console.warn('找不到该标签：', tagId)
-            return
-        }
-
-        // 获取该标签及其后代标签下的所有卡片id并去重
-        const allCardId = _.uniq(getCardIdsByTagAndOffspring(tag))
-
-        // 获取卡片
-        const promiseList = []
-        for (let i = 0; i < allCardId.length; i++) {
-            const cardId = allCardId[i];
-            promiseList.push(await getCardAPI(cardId))
-        }
-        const allCard = []
-        Promise.all(promiseList).then(resList => {
-            resList.forEach(res => {
-                allCard.push(res.data)
-            })
-
-            // 更新store-cards
-            dispatch(setCards(allCard))
-
-        }).catch(error => {
-            toast.error('操作失败，请稍后重试')
-            console.error('Error: ', error);
-        })
+        // 获取当前标签下的卡片
+        const cards = await getCardsByTagId(tagId)
+        // 更新store
+        dispatch(setCards(cards))
 
         // 2.更新路径栏
-        const tagName = tag.tagName
-        buildPathItems(tagName)
+        const tag = tags.find(tag => tag.id === tagId) //todo 或许从数据库查保险些
+        buildPathItems(tagId, tag.tagName)
 
         /* getTagAPI(tagId).then(async res => { //todo 或许可以从store中查
             // 1.拉取所选标签的及其后代标签的卡片更新store
@@ -400,6 +355,112 @@ function SlipBox() {
             toast.error('操作失败，请稍后重试')
             console.error('Error: ', error);
         }) */
+    }
+
+
+    let cid
+    const deletedTagIds = []
+    const decreasedTagIds = []
+    // 卡片计数-1的函数 
+    async function decreaseCardCount(id) {
+        // 递归终止条件：id为空或减过
+        if (!id || decreasedTagIds.includes(id)) return
+
+        const res = await getTagAPI(id)
+        const tag = res.data
+        const pid = tag.parent
+
+        // 业务逻辑
+        if (tag.cardCount === 1) {
+            // 保存id
+            cid = id
+            // 卡片数量只有1则删除当前标签
+            await handleCardCountZero(id)
+            deletedTagIds.push(id)
+        } else {
+            // 走到这表示上一级标签是最后一个卡片数量为1的标签（或者卡片数量不止1），则本标签将cid从children属性中删除
+            let children
+            if (cid) {
+                children = _.without(tag.children, cid)
+                //cid置为空
+                cid = ''
+            }
+            // 将计数-1
+            await patchTagAPI({ id: tag.id, cardCount: tag.cardCount - 1, children })
+            decreasedTagIds.push(tag.id)
+        }
+
+        // 递归
+        await decreaseCardCount(pid)
+    }
+
+    async function handleCardDelete(id, tagIds) {
+        try {
+            // 将del置为true、tags置为空
+            await patchCardAPI({ id, del: true, tags: [] })
+
+            for (let i = 0; i < tagIds.length; i++) {
+                const tid = tagIds[i];
+                // 向前遍历卡片的标签的所有父级，将计数-1
+                await decreaseCardCount(tid)
+                // 若卡片标签没被删除则将卡片从其标签中删去
+                if (!deletedTagIds.includes(tid)) {
+                    const res = await getTagAPI(tid) //todo 是否可直接从store-tags中查询？
+                    const tag = res.data
+                    tag && await patchTagAPI({ id: tag.id, cards: _.without(tag.cards, id) })
+                }
+            }
+
+            // 重新拉取卡片和标签 当前在哪个标签下就拉取哪个
+            // 获得当前标签
+            const currentTagId = _.last(pathItems).href
+
+            // 若当前标签被删除则标签树选中改为全部卡片，并拉取全部卡片
+            if (deletedTagIds.includes(currentTagId)) {
+                setSelectedKey('')
+                dispatch(fetchGetAllCards())
+
+                // 若没被删除则重新拉取当前标签下的卡片
+            } else {
+                currentTagId
+                    ? dispatch(setCards(await getCardsByTagId(currentTagId)))
+                    : dispatch(fetchGetAllCards()) // 在全部卡片下
+            }
+
+            // 有标签被删除时，重新拉取标签树
+            deletedTagIds.length && dispatch(fetchGetTags())
+
+
+        } catch (error) {
+            toast.error('删除失败，请稍后重试')
+            console.error('Error', error);
+        }
+    }
+
+    // 处理卡片菜单点击
+    const onCardMenuClick = (e, id, tagIds) => {
+        e.domEvent.stopPropagation()
+
+        switch (e.key) {
+            case 'edit':
+
+                break;
+            case 'pin':
+
+                break;
+            case 'detail':
+
+                break;
+            case 'comment':
+
+                break;
+            case 'delete':
+                handleCardDelete(id, tagIds)
+                break;
+            default:
+                break;
+        }
+
     }
 
 
@@ -458,7 +519,7 @@ function SlipBox() {
                         }}
                         trigger={['contextMenu']}
                         overlayStyle={{ width: 128.18 }}>
-                        <span>{_.last(tag.tagName.split('/'))}<span style={{ float: 'inline-end' }}>{'...'}</span></span>
+                        <span>{_.last(tag.tagName.split('/'))}<span style={{ float: 'inline-end' }}>{tag.cardCount}</span></span>
                     </Dropdown>,
                 key: tag.id,
                 icon: '#',
@@ -468,7 +529,7 @@ function SlipBox() {
             // 无孩子（临界值处理）：叶子节点直接返回
             tag.TreeBuildAccomplished = true // 标记为已构建
             return ({
-                title: // fixme icon与title不在一行
+                title:
                     <Dropdown
                         menu={{
                             items: tagMenuItems,
@@ -477,7 +538,7 @@ function SlipBox() {
                         }}
                         trigger={['contextMenu']}
                         overlayStyle={{ width: 128.18 }}>
-                        <span>{_.last(tag.tagName.split('/'))}<span style={{ float: 'inline-end' }}>{'...'}</span></span>
+                        <span>{_.last(tag.tagName.split('/'))}<span style={{ float: 'inline-end' }}>{tag.cardCount}</span></span>
                     </Dropdown>,
                 key: tag.id,
                 icon: '#',
@@ -490,20 +551,6 @@ function SlipBox() {
     tags_.forEach(tag => {
         if (!tag.TreeBuildAccomplished) tagTrees.push(buildTagTree(tag))
     })
-
-    // 路径项
-    /* const pathItems = [
-        {
-            title: <a href="">标签1</a>,
-        },
-        {
-            title: <a href="">标签1-1</a>,
-        },
-        {
-            title: <a href="">标签1-1-1</a>,
-        },
-    ] */
-
 
     return (
         <>
@@ -520,7 +567,7 @@ function SlipBox() {
                 transition={Bounce}
             />
             <Flex horizontal={'true'} gap={20} justify="center">
-                <Flex vertical={'true'} style={{ width: '600px', border: '1px solid #40a9ff' }} justify={'flex-start'} align={'center'}>
+                <Flex vertical={'true'} style={{ width: '600px' }} justify={'flex-start'} align={'center'}>
                     <Flex justify={'space-between'} style={{ width: '100%' }}>
                         <Flex style={{ maxWidth: '60%' }} gap={10} align="center">
 
@@ -545,12 +592,12 @@ function SlipBox() {
                     <Flex style={{ width: '100%' }}>
 
                         {/* 卡片容器 */}
-                        <CardList cards={cards} />
+                        <CardList cards={cards} onCardMenuClick={onCardMenuClick} />
                     </Flex>
                 </Flex>
 
                 {/* 右侧边栏-标签树 */}
-                <RightSider treeData={tagTrees} onSelect={handleTagSelected} />
+                <RightSider treeData={tagTrees} onSelect={handleTagSelected} selectedKey={selectedKey} />
             </Flex >
         </>
 

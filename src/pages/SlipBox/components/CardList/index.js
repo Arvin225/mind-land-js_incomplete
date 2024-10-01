@@ -2,7 +2,7 @@ import { Dropdown, Flex, List, Card } from "antd"
 import { EllipsisOutlined } from "@ant-design/icons"
 import VirtualList from 'rc-virtual-list'
 
-function CardList({ cards }) {
+function CardList({ cards, onCardMenuClick }) {
 
     const cardMenuItems = [
         {
@@ -64,7 +64,7 @@ function CardList({ cards }) {
                                                     }
                                                 ]
                                             ),
-                                            onClick: (e) => { },
+                                            onClick: (e) => onCardMenuClick(e, item.id, item.tags),
                                             style: { backgroundColor: '#454545' }
                                         }}
                                         placement="bottom"

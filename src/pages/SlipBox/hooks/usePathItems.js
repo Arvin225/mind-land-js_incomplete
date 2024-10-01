@@ -2,23 +2,31 @@ import _ from "lodash";
 import { useState } from "react";
 
 function usePathItems() {
-    const allCard = { title: <a href="">全部卡片</a> }
+    const allCardPathItem = { title: '全部卡片', href: '', onclick: e => e.preventDefault() }
 
-    const [pathItems, setPathItems] = useState([allCard])
-    const buildPathItems = (tagName) => {
+    const [pathItems, setPathItems] = useState([allCardPathItem])
+    const buildPathItems = (tagId, tagName) => {
         if (!tagName) { // 如果传过来的是空值则为全部卡片，路径为初始状态
-            setPathItems([allCard])
+            setPathItems([allCardPathItem])
             return
         }
         const splitNames = tagName.split('/')
-        const pathItems = [allCard]
+        const pathItems = [allCardPathItem]
         if (splitNames.length > 1) {
-            // todo 多级标签的根标签加上tagId
-            pathItems.push({ title: <a href={`/cards/?tagName=${splitNames[0]}`}>{splitNames[0]}</a> })
-            pathItems.push(...((splitNames.slice(1, splitNames.length - 1)).map(name => ({ title: <a href="">{name}</a> }))))
-            pathItems.push({ title: _.last(splitNames) })
+            if (splitNames.length > 2) {
+                // 标签超过二级，父级标签显示为...，//todo 且点击时查询的是根标签，携带标签名，处理点击时转化为id？
+                pathItems.push({ title: '...', href: '', onClick: e => e.preventDefault() })
+            } else {
+                // 否则显示标签名 //todo 点击查询，携带标签名，处理点击时转化为id？
+                pathItems.push({ title: splitNames[0], href: '', onClick: e => e.preventDefault() })
+                // pathItems.push(...((splitNames.slice(1, splitNames.length - 1)).map(name => ({ title: <a href="">{name}</a> }))))
+            }
+
+            // 当前标签名 //todo 点击查询
+            pathItems.push({ title: _.last(splitNames), href: tagId, onClick: e => e.preventDefault() })
         } else {
-            pathItems.push({ title: tagName })
+            // 当前标签名 //todo 点击查询
+            pathItems.push({ title: tagName, href: tagId, onClick: e => e.preventDefault() })
         }
         setPathItems(pathItems)
     }

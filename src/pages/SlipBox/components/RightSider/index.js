@@ -1,7 +1,7 @@
 import { Menu, Tree } from "antd"
 import Sider from "antd/es/layout/Sider"
 
-function RightSider({ treeData, onSelect }) {
+function RightSider({ treeData, onSelect, selectedKey }) {
 
     return (
         <Sider className='tagTree' width={260} style={{ minHeight: '100vh' }} theme="light" > {/* , border: '1px solid #40a9ff'  */}
@@ -24,6 +24,7 @@ function RightSider({ treeData, onSelect }) {
                 showIcon={true}
                 blockNode={true}
                 onSelect={(keys) => onSelect(keys)}
+                selectedKeys={[selectedKey]}
                 style={{ color: '#9d9d9d' }} />
         </Sider>
     )

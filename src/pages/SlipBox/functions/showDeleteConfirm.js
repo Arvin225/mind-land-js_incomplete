@@ -8,7 +8,7 @@ const showDeleteConfirm = ({ title, content, onOk }) => {
         title: title,
         icon: <ExclamationCircleFilled />,
         content: content,
-        okText: '确定',
+        okText: '确定删除',
         okType: 'danger',
         cancelText: '取消',
         onOk: onOk,

@@ -9,14 +9,17 @@ import PathBar from "./components/PathBar";
 import SortMenu from "./components/SortMenu";
 import RightSider from "./components/RightSider";
 import SearchBar from "./components/SearchBar";
-import _ from "lodash";
-import { getTagAPI, getTagByTagNameAPI, patchCardAPI, patchTagAPI, postCardAPI, postTagAPI } from "@/apis/slipBox";
+import _, { get } from "lodash";
+import { deleteTagAPI, getCardAPI, getTagAPI, getTagByTagNameAPI, patchCardAPI, patchTagAPI, postCardAPI, postTagAPI } from "@/apis/slipBox";
 import { Bounce, toast, ToastContainer } from "react-toastify";
 import dayjs from "dayjs";
 import { compile } from "html-to-text";
 import usePathItems from "./hooks/usePathItems";
 import handleCardCountZero from "./functions/handleCardCountZero";
 import getCardsByTagId from "./functions/getCardsByTagId";
+import showDeleteConfirm from "./functions/showDeleteConfirm";
+import recursiveTagChildren from "./functions/recursiveTagChildren";
+import recursiveTagParent from "./functions/recursiveTagParent";
 
 function SlipBox() {
     const dispatch = useDispatch()
@@ -190,7 +193,7 @@ function SlipBox() {
                 return await postCardAPI(
                     {
                         content: contentWithHtml,
-                        builtTime: currentDateTime,
+                        builtOrDelTime: `创建于 ${currentDateTime}`,
                         statistics: {
                             builtTime: currentDateTime,
                             updateTime: currentDateTime,
@@ -311,7 +314,7 @@ function SlipBox() {
         const tag = tags.find(tag => tag.id === tagId) //todo 或许从数据库查保险些
         buildPathItems(tagId, tag.tagName)
 
-        /* getTagAPI(tagId).then(async res => { //todo 或许可以从store中查
+        /* getTagAPI(tagId).then(async res => { // 或许可以从store中查
             // 1.拉取所选标签的及其后代标签的卡片更新store
             const tag = res.data
             // 收集当前标签及其后代标签的id
@@ -394,6 +397,7 @@ function SlipBox() {
         await decreaseCardCount(pid)
     }
 
+    // 卡片删除的函数
     async function handleCardDelete(id, tagIds) {
         try {
             // 将del置为true、tags置为空
@@ -464,6 +468,117 @@ function SlipBox() {
     }
 
 
+    // 仅移除标签的函数
+    const handleTagDelete = async (tagId, tagName) => {
+        try {
+            // 递归children
+            await recursiveTagChildren(tagId, async (tag) => {
+                const cards = tag.cards
+
+                // 1.从当前标签的所有卡片中移除当前标签，内容上也移除 //todo 用正则处理文本
+                for (let i = 0; i < cards.length; i++) {
+                    const res = await getCardAPI(cards[i])
+                    const card = res.data
+                    const regex = new RegExp(`/\b${tagName}\b/`)
+                    await patchCardAPI({ id: card.id, content: card.content.replaceAll(regex, ''), tags: _.without(card.tags, tag.id) })
+                }
+                // 删除当前标签
+                await deleteTagAPI(tag.id)
+
+                // 如果当前标签是递归回溯的根标签则：
+                if (tag.id === tagId) {
+                    const pid = tag.parent
+                    if (pid) {
+                        // 得到父标签
+                        const res = await getTagAPI(pid)
+                        const parent = res.data
+                        // 先将当前标签从父标签children属性中删除，因为获取父标签所有卡片时会遍历其所有子标签
+                        await patchTagAPI({ id: pid, children: _.without(parent.children, tag.id) })
+                        // 获取从父标签开始的当前的所有卡片
+                        const cardsFromParent = await getCardsByTagId(pid)
+                        // 统计数量
+                        const nowCardCount = _.uniq(cardsFromParent).length
+                        // 得到减少的数量
+                        const removedCardCount = parent.cardCount - nowCardCount
+
+                        let cid
+                        //从父标签开始向前遍历修改卡片计数
+                        await recursiveTagParent(pid, async (tag) => {
+                            // 卡片计数减为0则删除当前标签
+                            if (tag.cardCount === removedCardCount) {
+                                await deleteTagAPI(tag.id)
+                                cid = tag.id // 保存id
+                            } else {
+                                let children
+                                if (cid) {
+                                    children = _.without(tag.children, cid)
+                                }
+                                await patchTagAPI({ id: tag.id, children, cardCount: (tag.cardCount - removedCardCount) })
+                                cid = '' // 置为空
+                            }
+                        })
+
+                    }
+                }
+
+            })
+
+            // 重新拉取卡片及标签
+            const currentTagId = _.last(pathItems).href
+            let currentTagName
+            if (currentTagId && (currentTagId !== tagId)) { // 选中的是正常标签且选中的标签没被删除
+                const res = await getTagAPI(currentTagId)
+                const currentTag = res.data
+                currentTagName = currentTag.tagName
+            }
+
+            // 如果被删标签被选中（或选中的标签是其后代标签）
+            if (currentTagId === tagId || (currentTagName && currentTagName.startsWith(tagName))) {
+                // 选中改为全部卡片
+                setSelectedKey('')
+                // 拉取全部卡片
+                dispatch(fetchGetAllCards())
+
+                // 如果选中的标签是被删标签的父级标签时
+            } else if (currentTagName && tagName.startsWith(currentTagName)) {
+                dispatch(setCards(await getCardsByTagId(currentTagId)))
+
+                // 如果选中的标签是全部卡片时
+            } else if (!currentTagId) {
+                dispatch(fetchGetAllCards())
+            }
+
+            // 重新拉取标签
+            dispatch(fetchGetTags())
+
+        } catch (error) {
+            toast.error('移除失败，请稍后重试')
+            console.error('Error', error);
+        }
+    }
+
+    // 处理标签菜单点击
+    const onTagMenuClick = (e, tagId, tagName) => {
+        e.domEvent.stopPropagation()
+        switch (e.key) {
+            case 'pin':
+
+                break;
+            case 'rename':
+
+                break;
+            case 'delete':
+                showDeleteConfirm({ title: '从卡片中移除标签', content: `从所有卡片中移除 #${tagName}`, onOk: () => handleTagDelete(tagId, tagName) })
+                break;
+            case 'deleteOverCards':
+
+                break;
+            default:
+                break;
+        }
+    }
+
+
     /* -------------------------------------未获取到数据之前不允许进一步执行（数据拼接构造、渲染等)------------------------------------- */
     if (loadingCards || loadingTags) return
     /* -------------------------------------未获取到数据之前不允许进一步执行（数据拼接构造、渲染等)------------------------------------- */
@@ -514,7 +629,7 @@ function SlipBox() {
                     <Dropdown
                         menu={{
                             items: tagMenuItems,
-                            onClick: e => { e.domEvent.stopPropagation() },
+                            onClick: (e) => onTagMenuClick(e, tag.id, tag.tagName),
                             style: { backgroundColor: '#454545' }
                         }}
                         trigger={['contextMenu']}
@@ -533,7 +648,7 @@ function SlipBox() {
                     <Dropdown
                         menu={{
                             items: tagMenuItems,
-                            onClick: e => { e.domEvent.stopPropagation() },
+                            onClick: (e) => onTagMenuClick(e, tag.id, tag.tagName),
                             style: { backgroundColor: '#454545' }
                         }}
                         trigger={['contextMenu']}

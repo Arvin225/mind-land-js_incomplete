@@ -41,7 +41,7 @@ function CardList({ cards, onCardMenuClick }) {
                         <Card size="small" style={{ width: '100%', backgroundColor: '#202020', color: '#d9d9d9', fontSize: '14px' }} bordered={false}>
                             <div style={{ padding: '3px' }}>
                                 <Flex justify="space-between" style={{ paddingBottom: '10px' }}>
-                                    <div style={{ fontSize: '12px' }}>{item.builtTime}</div>
+                                    <div style={{ fontSize: '12px' }}>{item.builtOrDelTime}</div>
                                     <Dropdown
                                         menu={{
                                             items: cardMenuItems.concat(

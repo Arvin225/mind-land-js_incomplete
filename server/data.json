@@ -354,473 +354,212 @@
   ],
   "cards": [
     {
-      "id": "0750",
-      "content": "<p><strong>基于规则的优化</strong></p><ul><li>语句重写规则</li><li>IN子查询的优化如果IN子查询符合转换为semi-join的条件，查询优化器会优先把该子查询转换为semi-join，然后再考虑下边5种执行半连接的策略中哪个成本最低：Table pulloutDuplicateWeedoutLooseScanMaterializationFirstMatch选择成本最低的那种执行策略来执行子查询。如果IN子查询不符合转换为semi-join的条件，那么查询优化器会从下边两种策略中找出一种成本更低的方式执行子查询：先将子查询物化之后再执行查询执行IN to EXISTS转换</li></ul><p>#CS/MySQL/QueryOptimizing </p>",
-      "builtTime": "2024-10-01 14:41",
+      "id": "b327",
+      "content": "<p>Java开启一个线程后，JVM会为其分配一个Java虚拟机栈，栈里面有栈帧，栈帧里面包含方法执行时的局部变量、方法参数、返回地址等</p><p>#Java/JVM</p><p></p>",
+      "builtOrDelTime": "创建于 2024-10-02 13:53",
       "statistics": {
-        "builtTime": "2024-10-01 14:41",
-        "updateTime": "2024-10-01 14:41",
-        "words": 298
+        "builtTime": "2024-10-02 13:53",
+        "updateTime": "2024-10-02 13:53",
+        "words": 85
       },
       "tags": [
-        "0b39"
+        "e856"
       ],
       "del": false
     },
     {
-      "id": "96a2",
-      "content": "<p><strong>基于成本的优化</strong></p><p>1.全表扫描的成本构成：</p><ul><li>I/O成本：占用的字节数 ➗ 单页大小（16KB）✖ 1.0 ➕ 1.1</li><li>CPU成本：记录数 ✖ 0.2 ➕1.0</li></ul><p><br></p><p>2.一个二级索引条件单次查询的成本构成：</p><ul><li>对于索引表： I/O成本：条件中的范围（区间）数 ✖ 1.0CPU成本：条件中所有区间的记录数 ✖ 0.2 ➕ 0.01</li><li>回表时：I/O成本：条件中所有区间的记录数 ✖ 1.0 （每次回表操作都相当于访问一次页面）</li><li>其余条件的匹配：CPU成本：条件中所有区间的记录数 ✖ 0.2</li></ul><ol><li>查询优化的步骤：基于1和2，即分别计算全表扫描、各个索引条件的查询成本，对比找出代价最低的作为最终执行计划</li><li>连接查询的成本 ＝ 单次访问驱动表的成本 ➕ 驱动表扇出数 ✖ 单次访问被驱动表的成本</li><li>连接查询的优化步骤：</li></ol><p> &nbsp; - 对于两表的连接：</p><p> &nbsp; - 对于多表的连接：</p><p>#CS/MySQL/QueryOptimizing</p>",
-      "builtTime": "2024-10-01 14:42",
+      "id": "8049",
+      "content": "<ol><li>B+树索引适用于下边这些情况：全值匹配匹配左边的列匹配范围值精确匹配某一列并范围匹配另外一列用于排序用于分组</li><li>在使用索引时需要注意下边这些事项：只为用于搜索、排序或分组的列创建索引为列的基数大的列创建索引索引列的类型尽量小可以只对字符串值的前缀建立索引只有索引列在比较表达式中单独出现才可以适用索引为了尽可能少的让聚簇索引发生页面分裂和记录移位的情况，建议让主键拥有AUTO_INCREMENT属性。定位并删除表中的重复和冗余索引尽量使用覆盖索引进行查询，避免回表带来的性能损耗。</li></ol><p> /MySQL/B+Tree </p>",
+      "builtOrDelTime": "创建于 2024-10-02 14:21",
       "statistics": {
-        "builtTime": "2024-10-01 14:42",
-        "updateTime": "2024-10-01 14:42",
-        "words": 403
-      },
-      "tags": [
-        "0b39"
-      ],
-      "del": false
-    },
-    {
-      "id": "b60e",
-      "content": "<p>一张表有N个索引</p><ul><li>每个索引分为两个段：非叶子节点段（目录页集合）、叶子节点段（数据页集合）每个段额外维护三个链表：空闲（Free）区的 XEDS Entry 链表有剩余空间（Not_Full）区的 XEDS Entry 链表爆满（Full）区的 XEDS Entry 链表</li><li>另外表空间还要维护碎片区的三个链表Free 空闲区的 XEDS Entry 链表Free_Frag 有剩余空间区的 XEDS Entry 链表Full 爆满区的 XEDS Entry 链表</li></ul><p> #CS/MySQL/TableSpace</p>",
-      "builtTime": "2024-10-01 14:42",
-      "statistics": {
-        "builtTime": "2024-10-01 14:42",
-        "updateTime": "2024-10-01 14:42",
-        "words": 253
-      },
-      "tags": [
-        "5d98"
-      ],
-      "del": false
-    },
-    {
-      "id": "ccdb",
-      "content": "<ol><li>B+树索引适用于下边这些情况：全值匹配匹配左边的列匹配范围值精确匹配某一列并范围匹配另外一列用于排序用于分组</li><li>在使用索引时需要注意下边这些事项：只为用于搜索、排序或分组的列创建索引为列的基数大的列创建索引索引列的类型尽量小可以只对字符串值的前缀建立索引只有索引列在比较表达式中单独出现才可以适用索引为了尽可能少的让聚簇索引发生页面分裂和记录移位的情况，建议让主键拥有AUTO_INCREMENT属性。定位并删除表中的重复和冗余索引尽量使用覆盖索引进行查询，避免回表带来的性能损耗。</li></ol><p> #CS/MySQL/B+Tree </p>",
-      "builtTime": "2024-10-01 14:42",
-      "statistics": {
-        "builtTime": "2024-10-01 14:42",
-        "updateTime": "2024-10-01 14:42",
+        "builtTime": "2024-10-02 14:21",
+        "updateTime": "2024-10-02 14:21",
         "words": 259
       },
-      "tags": [
-        "246f"
-      ],
+      "tags": [],
       "del": false
     },
     {
-      "id": "2f24",
-      "content": "<p>二叉搜索树的效率：</p><ul><li>二叉搜索树的查找操作天然地实现了二分查找，因此时间复杂度为 O(logN)</li><li>又因为插入和删除操作依赖查找操作，因此插入和删除的时间复杂度也为 O(logN)</li></ul><p> #CS/DS&A/BinaryTree/BinarySearchTree </p>",
-      "builtTime": "2024-10-01 14:43",
+      "id": "8b37",
+      "content": "<p><strong>基于规则的优化</strong></p><ul><li>语句重写规则</li><li>IN子查询的优化如果IN子查询符合转换为semi-join的条件，查询优化器会优先把该子查询转换为semi-join，然后再考虑下边5种执行半连接的策略中哪个成本最低：Table pulloutDuplicateWeedoutLooseScanMaterializationFirstMatch选择成本最低的那种执行策略来执行子查询。如果IN子查询不符合转换为semi-join的条件，那么查询优化器会从下边两种策略中找出一种成本更低的方式执行子查询：先将子查询物化之后再执行查询执行IN to EXISTS转换</li></ul><p>/MySQL/QueryOptimizing </p>",
+      "builtOrDelTime": "创建于 2024-10-02 14:21",
       "statistics": {
-        "builtTime": "2024-10-01 14:43",
-        "updateTime": "2024-10-01 14:43",
+        "builtTime": "2024-10-02 14:21",
+        "updateTime": "2024-10-02 14:21",
+        "words": 298
+      },
+      "tags": [],
+      "del": false
+    },
+    {
+      "id": "42af",
+      "content": "<p>一张表有N个索引</p><ul><li>每个索引分为两个段：非叶子节点段（目录页集合）、叶子节点段（数据页集合）每个段额外维护三个链表：空闲（Free）区的 XEDS Entry 链表有剩余空间（Not_Full）区的 XEDS Entry 链表爆满（Full）区的 XEDS Entry 链表</li><li>另外表空间还要维护碎片区的三个链表Free 空闲区的 XEDS Entry 链表Free_Frag 有剩余空间区的 XEDS Entry 链表Full 爆满区的 XEDS Entry 链表</li></ul><p> /MySQL/TableSpace</p>",
+      "builtOrDelTime": "创建于 2024-10-02 14:22",
+      "statistics": {
+        "builtTime": "2024-10-02 14:22",
+        "updateTime": "2024-10-02 14:22",
+        "words": 253
+      },
+      "tags": [],
+      "del": false
+    },
+    {
+      "id": "c956",
+      "content": "<p>InnoDB中，所有非主键索引，最终都会回到聚簇索引，称为 “回表”</p><p>  </p><p> /MySQL/B+Tree </p>",
+      "builtOrDelTime": "创建于 2024-10-02 14:22",
+      "statistics": {
+        "builtTime": "2024-10-02 14:22",
+        "updateTime": "2024-10-02 14:22",
+        "words": 79
+      },
+      "tags": [],
+      "del": false
+    },
+    {
+      "id": "5286",
+      "content": "<p><strong>基于成本的优化</strong></p><p>1.全表扫描的成本构成：</p><ul><li>I/O成本：占用的字节数 ➗ 单页大小（16KB）✖ 1.0 ➕ 1.1</li><li>CPU成本：记录数 ✖ 0.2 ➕1.0</li></ul><p><br></p><p>2.一个二级索引条件单次查询的成本构成：</p><ul><li>对于索引表： I/O成本：条件中的范围（区间）数 ✖ 1.0CPU成本：条件中所有区间的记录数 ✖ 0.2 ➕ 0.01</li><li>回表时：I/O成本：条件中所有区间的记录数 ✖ 1.0 （每次回表操作都相当于访问一次页面）</li><li>其余条件的匹配：CPU成本：条件中所有区间的记录数 ✖ 0.2</li></ul><p><br></p><ol><li>查询优化的步骤：基于1和2，即分别计算全表扫描、各个索引条件的查询成本，对比找出代价最低的作为最终执行计划</li><li>连接查询的成本 ＝ 单次访问驱动表的成本 ➕ 驱动表扇出数 ✖ 单次访问被驱动表的成本</li><li>连接查询的优化步骤：</li></ol><p> &nbsp; - 对于两表的连接：</p><p> &nbsp; - 对于多表的连接：</p><p>/MySQL/QueryOptimizing</p>",
+      "builtOrDelTime": "创建于 2024-10-02 14:22",
+      "statistics": {
+        "builtTime": "2024-10-02 14:22",
+        "updateTime": "2024-10-02 14:22",
+        "words": 404
+      },
+      "tags": [],
+      "del": false
+    },
+    {
+      "id": "6c0b",
+      "content": "<p>二叉搜索树的效率：</p><ul><li>二叉搜索树的查找操作天然地实现了二分查找，因此时间复杂度为 O(logN)</li><li>又因为插入和删除操作依赖查找操作，因此插入和删除的时间复杂度也为 O(logN)</li></ul><p> /DS&A/BinaryTree/BinarySearchTree </p>",
+      "builtOrDelTime": "创建于 2024-10-02 14:22",
+      "statistics": {
+        "builtTime": "2024-10-02 14:22",
+        "updateTime": "2024-10-02 14:22",
         "words": 127
       },
-      "tags": [
-        "54f8"
-      ],
+      "tags": [],
       "del": false
     },
     {
-      "id": "b45d",
-      "content": "<p>删除一个节点时：</p><ul><li>待删节点只有一个子节点（左或右）直接删除，然后将其子节点放到其位置</li><li>待删节点有两个子节点利用中序遍历法查找待删节点的右子树的最左侧的那个节点（叶子节点）将其暂存，而后删除用该叶子节点的 “值” 覆盖待删节点的值即可</li></ul><p>#CS/DS&A/BinaryTree/BinarySearchTree</p>",
-      "builtTime": "2024-10-01 14:43",
+      "id": "f304",
+      "content": "<p>插入一个节点时：</p><ul><li>按照 “小于看左，大于看右” 的操作找到一个空位插入即可（不严谨地说插入后该节点就成了这颗树的一个叶子节点）</li><li>要注意的是二叉搜索树中不能有重复的节点，因此插入时遇到值相等的节点直接终止插入</li></ul><p> /DS&A/BinaryTree/BinarySearchTree </p>",
+      "builtOrDelTime": "创建于 2024-10-02 14:22",
       "statistics": {
-        "builtTime": "2024-10-01 14:43",
-        "updateTime": "2024-10-01 14:43",
-        "words": 153
+        "builtTime": "2024-10-02 14:22",
+        "updateTime": "2024-10-02 14:22",
+        "words": 142
       },
-      "tags": [
-        "54f8"
-      ],
+      "tags": [],
       "del": false
     },
     {
-      "id": "ebbb",
-      "content": "<p>红黑性质：</p><ol><li>所有节点不是黑色就是红色</li><li>根节点是黑色的</li><li>每个叶子节点都是黑色的（为了处理边界问题，空节点也被视为叶子节点，即空节点都是黑色的）</li><li>红色节点的两个子节点必须都是黑色的（红红不相邻）</li><li>对于每个节点，到其各个叶子节点经过的黑色节点的数量相等</li></ol><p>#CS/DS&A/BlackRedTree </p>",
-      "builtTime": "2024-10-01 14:43",
+      "id": "19cf",
+      "content": "<p>红黑性质：</p><ol><li>所有节点不是黑色就是红色</li><li>根节点是黑色的</li><li>每个叶子节点都是黑色的（为了处理边界问题，空节点也被视为叶子节点，即空节点都是黑色的）</li><li>红色节点的两个子节点必须都是黑色的（红红不相邻）</li><li>对于每个节点，到其各个叶子节点经过的黑色节点的数量相等</li></ol><p>/DS&A/BlackRedTree </p>",
+      "builtOrDelTime": "创建于 2024-10-02 14:22",
       "statistics": {
-        "builtTime": "2024-10-01 14:43",
-        "updateTime": "2024-10-01 14:43",
+        "builtTime": "2024-10-02 14:22",
+        "updateTime": "2024-10-02 14:22",
         "words": 146
       },
-      "tags": [
-        "0794"
-      ],
+      "tags": [],
       "del": false
     },
     {
-      "id": "5342",
-      "content": "<p>快速排序和归并排序</p><ul><li>快速排序和归并排序体现的都是分治思想，时间复杂度都是O(nlogn)</li><li>区别快速排序是分的时候排序，最后只管合并左右已经排好序的左右子序列归并排序是归的时候排序，先分，回溯的时候再一一比较排序，比较的是各子序列的首元素，小的（大的）则放到辅助数组中，引入了额外的数组空间，空间复杂度为</li></ul><p> #CS/DS&A/Sorting</p>",
-      "builtTime": "2024-10-01 14:43",
+      "id": "60a5",
+      "content": "<p>快速排序和归并排序</p><ul><li>快速排序和归并排序体现的都是分治思想，时间复杂度都是O(nlogn)</li><li>区别快速排序是分的时候排序，最后只管合并左右已经排好序的左右子序列归并排序是归的时候排序，先分，回溯的时候再一一比较排序，比较的是各子序列的首元素，小的（大的）则放到辅助数组中，引入了额外的数组空间，空间复杂度为</li></ul><p> /DS&A/Sorting</p>",
+      "builtOrDelTime": "创建于 2024-10-02 14:22",
       "statistics": {
-        "builtTime": "2024-10-01 14:43",
-        "updateTime": "2024-10-01 14:43",
+        "builtTime": "2024-10-02 14:22",
+        "updateTime": "2024-10-02 14:22",
         "words": 169
       },
-      "tags": [
-        "4407"
-      ],
+      "tags": [],
       "del": false
     },
     {
-      "id": "4fe7",
-      "content": "<p>桶排序、计数排序、基数排序：</p><ul><li>它们都属于将数据映射到有序范围的排序算法</li><li>利用了索引天然有序的特性，因此很少进行值比较或者完全不用值比较（计数、基数排序）</li></ul><p>#CS/DS&A/Sorting </p>",
-      "builtTime": "2024-10-01 14:43",
+      "id": "c6bb",
+      "content": "<p>#Java/SpringBoot </p><p>凡带starter的包，SpringBoot都对其进行了整合，意味着可在yml文件中进行属性配置</p>",
+      "builtOrDelTime": "创建于 2024-10-02 14:23",
       "statistics": {
-        "builtTime": "2024-10-01 14:43",
-        "updateTime": "2024-10-01 14:43",
-        "words": 94
+        "builtTime": "2024-10-02 14:23",
+        "updateTime": "2024-10-02 14:23",
+        "words": 66
       },
       "tags": [
-        "4407"
+        "2537"
       ],
       "del": false
     },
     {
-      "id": "bd4d",
-      "content": "<p>一条记录（数据），本质上是其索引加其本身，由InnoDB引擎建立的索引中包含了记录本身，因此在InnoDB中，记录（数据）即索引，索引即记录（数据）</p><p>#CS/MySQL/StorageEngine </p><p>#CS/MySQL/B+Tree </p>",
-      "builtTime": "2024-10-01 14:44",
+      "id": "7262",
+      "content": "<p> #Java/SpringBoot </p><p>给类加上 @Configuration 注解变成配置类，一般是想在SpringBoot启动时顺带初始化某些东西，比如添加某些必要的对象进IoC容器，以便后续使用</p>",
+      "builtOrDelTime": "创建于 2024-10-02 14:23",
       "statistics": {
-        "builtTime": "2024-10-01 14:44",
-        "updateTime": "2024-10-01 14:44",
-        "words": 117
+        "builtTime": "2024-10-02 14:23",
+        "updateTime": "2024-10-02 14:23",
+        "words": 99
       },
       "tags": [
-        "a7cc",
-        "246f"
+        "2537"
       ],
       "del": false
     },
     {
-      "id": "6d80",
-      "content": "<p>InnoDB 和 MyISAM 会自动为主键或者声明为 UNIQUE 的字段建立 B+ 树索引，也即聚簇索引</p><p>#CS/MySQL/StorageEngine</p><p>#CS/MySQL/B+Tree</p>",
-      "builtTime": "2024-10-01 14:44",
-      "statistics": {
-        "builtTime": "2024-10-01 14:44",
-        "updateTime": "2024-10-01 14:44",
-        "words": 95
-      },
-      "tags": [
-        "a7cc",
-        "246f"
-      ],
-      "del": false
-    },
-    {
-      "id": "dd24",
-      "content": "<p>#Java/SpringBoot</p><p>SpringBoot整合第三方技术：</p><ol><li>引入starter依赖</li><li>yml中配置（有些不用）</li><li>添加配置类（有些不用）</li></ol>",
-      "builtTime": "2024-10-01 14:45",
-      "statistics": {
-        "builtTime": "2024-10-01 14:45",
-        "updateTime": "2024-10-01 14:45",
-        "words": 72
-      },
-      "tags": [
-        "59be"
-      ],
-      "del": false
-    },
-    {
-      "id": "f19e",
+      "id": "7751",
       "content": "<p>原子类的内部是用Unsafe类实现各种原子的操作，而Unsafe结合了CAS技术，且其对对象属性值的修改需要借助该属性相对于所属对象在内存中的偏移量offset，同时由于CAS的性质，该属性需要用volatile修饰，防止JIT对其缓存优化</p><p>#Java/JUC </p>",
-      "builtTime": "2024-10-01 14:45",
+      "builtOrDelTime": "创建于 2024-10-02 14:23",
       "statistics": {
-        "builtTime": "2024-10-01 14:45",
-        "updateTime": "2024-10-01 14:45",
+        "builtTime": "2024-10-02 14:23",
+        "updateTime": "2024-10-02 14:23",
         "words": 131
       },
       "tags": [
-        "d27e"
+        "9886"
       ],
       "del": false
-    },
-    {
-      "id": "952f",
-      "content": "<p>Java开启一个线程后，JVM会为其分配一个Java虚拟机栈，栈里面有栈帧，栈帧里面包含方法执行时的局部变量、方法参数、返回地址等</p><p>#Java/JVM</p><p>#Java/JUC</p>",
-      "builtTime": "2024-10-01 14:45",
-      "statistics": {
-        "builtTime": "2024-10-01 14:45",
-        "updateTime": "2024-10-01 14:45",
-        "words": 85
-      },
-      "tags": [],
-      "del": true
-    },
-    {
-      "id": "b53d",
-      "content": "<p>#论文/CNN/优势与劣势 </p><ul><li>模型复杂度大大降低（训练参数大大减少），更易于训练及识别、泛化能力及精准度得到显著提升摒弃了繁琐的数据预处理过程将特征提取、分类器识别等模块的功能集合在一个网络里，省去了特征提取和数据重建等工作</li></ul>",
-      "builtTime": "2024-10-01 14:46",
-      "statistics": {
-        "builtTime": "2024-10-01 14:46",
-        "updateTime": "2024-10-01 14:46",
-        "words": 112
-      },
-      "tags": [
-        "13f1"
-      ],
-      "del": false
-    },
-    {
-      "id": "e0ae",
-      "content": "<p>深度学习通过多层结构逐层向上抽象学习特征,该过程无需人工参与,通过特定的数学表达,可将特征转化为有价值的信息,指导机器完成学习工作。</p><p><br></p><p>https://qa.cnki.net/web/query?q=%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%90%86%E8%AE%BA</p><p><br></p><p>#论文/深度学习 </p>",
-      "builtTime": "2024-10-01 14:46",
-      "statistics": {
-        "builtTime": "2024-10-01 14:46",
-        "updateTime": "2024-10-01 14:46",
-        "words": 165
-      },
-      "tags": [
-        "fe85"
-      ],
-      "del": false
-    },
-    {
-      "id": "b1cd",
-      "content": "<p>神经网络的主要工作是建立模型和确定权值</p><p><br></p><p>https://blog.csdn.net/qq_24708791/article/details/78370881?ops_request_misc=%257B%2522request%255Fid%2522%253A%2522164327409516780366577950%2522%252C%2522scm%2522%253A%252220140713.130102334.pc%255Fall.%2522%257D&request_id=164327409516780366577950&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~first_rank_ecpm_v1~rank_v31_ecpm-4-78370881.pc_search_result_cache&utm_term=%E4%BA%BA%E5%B7%A5%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C&spm=1018.2226.3001.4187#/</p><p><br></p><p>#论文/ANN </p>",
-      "builtTime": "2024-10-01 14:47",
-      "statistics": {
-        "builtTime": "2024-10-01 14:47",
-        "updateTime": "2024-10-01 14:47",
-        "words": 505
-      },
-      "tags": [
-        "1fe1"
-      ],
-      "del": false
-    },
-    {
-      "id": "fb8d",
-      "content": "<p>#论文/ANN</p><p>传统神经网络每一层都是对上一层特征进行线性回归, 再进行非线性变换的操作</p>",
-      "builtTime": "2024-10-01 14:47",
-      "statistics": {
-        "builtTime": "2024-10-01 14:47",
-        "updateTime": "2024-10-01 14:47",
-        "words": 44
-      },
-      "tags": [
-        "1fe1"
-      ],
-      "del": false
-    },
-    {
-      "id": "d875",
-      "content": "<p>Java开启一个线程后，JVM会为其分配一个Java虚拟机栈，栈里面有栈帧，栈帧里面包含方法执行时的局部变量、方法参数、返回地址等</p><p>#Java/JVM</p><p>#Java/JUC</p>",
-      "builtTime": "2024-10-01 15:43",
-      "statistics": {
-        "builtTime": "2024-10-01 15:43",
-        "updateTime": "2024-10-01 15:43",
-        "words": 85
-      },
-      "tags": [],
-      "del": true
     }
   ],
   "tags": [
     {
-      "id": "0b39",
-      "tagName": "CS/MySQL/QueryOptimizing",
-      "children": [],
-      "cardCount": 2,
-      "cards": [
-        "0750",
-        "96a2"
-      ],
-      "parent": "49c6"
-    },
-    {
-      "id": "49c6",
-      "tagName": "CS/MySQL",
-      "children": [
-        "0b39",
-        "5d98",
-        "246f",
-        "a7cc"
-      ],
-      "cardCount": 6,
-      "cards": [],
-      "parent": "28b9"
-    },
-    {
-      "id": "28b9",
-      "tagName": "CS",
-      "children": [
-        "49c6",
-        "beed"
-      ],
-      "cardCount": 11,
-      "cards": []
-    },
-    {
-      "id": "5d98",
-      "tagName": "CS/MySQL/TableSpace",
+      "id": "e856",
+      "tagName": "Java/JVM",
       "children": [],
       "cardCount": 1,
       "cards": [
-        "b60e"
+        "b327"
       ],
-      "parent": "49c6"
+      "parent": "b7af"
     },
     {
-      "id": "246f",
-      "tagName": "CS/MySQL/B+Tree",
-      "children": [],
-      "cardCount": 3,
-      "cards": [
-        "ccdb",
-        "bd4d",
-        "6d80"
-      ],
-      "parent": "49c6"
-    },
-    {
-      "id": "54f8",
-      "tagName": "CS/DS&A/BinaryTree/BinarySearchTree",
-      "children": [],
-      "cardCount": 2,
-      "cards": [
-        "2f24",
-        "b45d"
-      ],
-      "parent": "b50f"
-    },
-    {
-      "id": "b50f",
-      "tagName": "CS/DS&A/BinaryTree",
-      "children": [
-        "54f8"
-      ],
-      "cardCount": 2,
-      "cards": [],
-      "parent": "beed"
-    },
-    {
-      "id": "beed",
-      "tagName": "CS/DS&A",
-      "children": [
-        "b50f",
-        "0794",
-        "4407"
-      ],
-      "cardCount": 5,
-      "cards": [],
-      "parent": "28b9"
-    },
-    {
-      "id": "0794",
-      "tagName": "CS/DS&A/BlackRedTree",
-      "children": [],
-      "cardCount": 1,
-      "cards": [
-        "ebbb"
-      ],
-      "parent": "beed"
-    },
-    {
-      "id": "4407",
-      "tagName": "CS/DS&A/Sorting",
-      "children": [],
-      "cardCount": 2,
-      "cards": [
-        "5342",
-        "4fe7"
-      ],
-      "parent": "beed"
-    },
-    {
-      "id": "a7cc",
-      "tagName": "CS/MySQL/StorageEngine",
-      "children": [],
-      "cardCount": 2,
-      "cards": [
-        "bd4d",
-        "6d80"
-      ],
-      "parent": "49c6"
-    },
-    {
-      "id": "59be",
-      "tagName": "Java/SpringBoot",
-      "children": [],
-      "cardCount": 1,
-      "cards": [
-        "dd24"
-      ],
-      "parent": "13e1"
-    },
-    {
-      "id": "13e1",
+      "id": "b7af",
       "tagName": "Java",
       "children": [
-        "59be",
-        "d27e"
-      ],
-      "cardCount": 2,
-      "cards": []
-    },
-    {
-      "id": "d27e",
-      "tagName": "Java/JUC",
-      "children": [],
-      "cardCount": 1,
-      "cards": [
-        "f19e"
-      ],
-      "parent": "13e1"
-    },
-    {
-      "id": "13f1",
-      "tagName": "论文/CNN/优势与劣势",
-      "children": [],
-      "cardCount": 1,
-      "cards": [
-        "b53d"
-      ],
-      "parent": "1321"
-    },
-    {
-      "id": "1321",
-      "tagName": "论文/CNN",
-      "children": [
-        "13f1"
-      ],
-      "cardCount": 1,
-      "cards": [],
-      "parent": "0a2a"
-    },
-    {
-      "id": "0a2a",
-      "tagName": "论文",
-      "children": [
-        "1321",
-        "fe85",
-        "1fe1"
+        "e856",
+        "2537",
+        "9886"
       ],
       "cardCount": 4,
       "cards": []
     },
     {
-      "id": "fe85",
-      "tagName": "论文/深度学习",
-      "children": [],
-      "cardCount": 1,
-      "cards": [
-        "e0ae"
-      ],
-      "parent": "0a2a"
-    },
-    {
-      "id": "1fe1",
-      "tagName": "论文/ANN",
+      "id": "2537",
+      "tagName": "Java/SpringBoot",
       "children": [],
       "cardCount": 2,
       "cards": [
-        "b1cd",
-        "fb8d"
+        "c6bb",
+        "7262"
       ],
-      "parent": "0a2a"
+      "parent": "b7af"
+    },
+    {
+      "id": "9886",
+      "tagName": "Java/JUC",
+      "children": [],
+      "cardCount": 1,
+      "cards": [
+        "7751"
+      ],
+      "parent": "b7af"
     }
   ]
 }

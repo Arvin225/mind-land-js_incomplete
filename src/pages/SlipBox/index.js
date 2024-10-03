@@ -9,23 +9,23 @@ import PathBar from "./components/PathBar";
 import SortMenu from "./components/SortMenu";
 import RightSider from "./components/RightSider";
 import SearchBar from "./components/SearchBar";
-import _, { get } from "lodash";
+import _ from "lodash";
 import { deleteTagAPI, getCardAPI, getTagAPI, getTagByTagNameAPI, patchCardAPI, patchTagAPI, postCardAPI, postTagAPI } from "@/apis/slipBox";
 import { Bounce, toast, ToastContainer } from "react-toastify";
-import dayjs from "dayjs";
 import { compile } from "html-to-text";
 import usePathItems from "./hooks/usePathItems";
-import handleCardCountZero from "./functions/handleCardCountZero";
 import getCardsByTagId from "./functions/getCardsByTagId";
 import showDeleteConfirm from "./functions/showDeleteConfirm";
 import recursiveTagChildren from "./functions/recursiveTagChildren";
 import recursiveTagParent from "./functions/recursiveTagParent";
+import getCurrentDateTime from "./functions/getCurrentDateTime";
+import decreaseCardCount from "./functions/decreaseCardCount";
 
 function SlipBox() {
     const dispatch = useDispatch()
     const { pathItems, buildPathItems } = usePathItems()
     useEffect(() => {
-        dispatch(fetchGetAllCards())
+        dispatch(fetchGetAllCards(false))
         dispatch(fetchGetTags())
     }, [])
     // 得到cards、tags的loading状态
@@ -189,7 +189,7 @@ function SlipBox() {
 
             // 保存 card 的函数
             async function saveCard(contentWithHtml, contentWithText, cardTags) {
-                const currentDateTime = dayjs().format('YYYY-MM-DD HH:mm'); // 格式化当前时间
+                const currentDateTime = getCurrentDateTime(); // 格式化当前时间
                 return await postCardAPI(
                     {
                         content: contentWithHtml,
@@ -261,16 +261,16 @@ function SlipBox() {
             // 合并去重后的叶子及父级标签
             uniqAllTagNames.push(...uniqPreTagNames)
             // 2.1 提交cardCount+1
-            increaseCardCount(uniqAllTagNames).then(async resList => {
+            increaseCardCount(uniqAllTagNames).then(async () => {
                 // 3.将id与html文本一起存到cards表
                 saveCard(contentWithHtml, contentWithText, cardTags).then(async res => {
                     // 4.将当前卡片的id保存到其所有叶子标签中
-                    addCardIdIntoTag(leafTags, res.data.id).then(resList => {
+                    addCardIdIntoTag(leafTags, res.data.id).then(() => {
                         // 5.更新store (cards、tags) 
                         // 更新store-tags
                         dispatch(fetchGetTags());
                         // todo 判断添加的card的tag是否是在当前路径下，是则拉取cards
-                        dispatch(fetchGetAllCards());
+                        dispatch(fetchGetAllCards(false));
                         // 6.清空输入框
                         editor.clear();
                     }).catch(error => {
@@ -299,7 +299,7 @@ function SlipBox() {
         // 选中的是全部卡片则：
         if (!tagId) {
             // 拉取全部卡片
-            dispatch(fetchGetAllCards())
+            dispatch(fetchGetAllCards(false))
             // 更新路径栏
             buildPathItems('')
             return
@@ -361,52 +361,16 @@ function SlipBox() {
     }
 
 
-    let cid
-    const deletedTagIds = []
-    const decreasedTagIds = []
-    // 卡片计数-1的函数 
-    async function decreaseCardCount(id) {
-        // 递归终止条件：id为空或减过
-        if (!id || decreasedTagIds.includes(id)) return
-
-        const res = await getTagAPI(id)
-        const tag = res.data
-        const pid = tag.parent
-
-        // 业务逻辑
-        if (tag.cardCount === 1) {
-            // 保存id
-            cid = id
-            // 卡片数量只有1则删除当前标签
-            await handleCardCountZero(id)
-            deletedTagIds.push(id)
-        } else {
-            // 走到这表示上一级标签是最后一个卡片数量为1的标签（或者卡片数量不止1），则本标签将cid从children属性中删除
-            let children
-            if (cid) {
-                children = _.without(tag.children, cid)
-                //cid置为空
-                cid = ''
-            }
-            // 将计数-1
-            await patchTagAPI({ id: tag.id, cardCount: tag.cardCount - 1, children })
-            decreasedTagIds.push(tag.id)
-        }
-
-        // 递归
-        await decreaseCardCount(pid)
-    }
-
     // 卡片删除的函数
     async function handleCardDelete(id, tagIds) {
         try {
             // 将del置为true、tags置为空
             await patchCardAPI({ id, del: true, tags: [] })
-
+            let deletedTagIds
             for (let i = 0; i < tagIds.length; i++) {
                 const tid = tagIds[i];
                 // 向前遍历卡片的标签的所有父级，将计数-1
-                await decreaseCardCount(tid)
+                deletedTagIds = await decreaseCardCount(tid)
                 // 若卡片标签没被删除则将卡片从其标签中删去
                 if (!deletedTagIds.includes(tid)) {
                     const res = await getTagAPI(tid) //todo 是否可直接从store-tags中查询？
@@ -422,13 +386,13 @@ function SlipBox() {
             // 若当前标签被删除则标签树选中改为全部卡片，并拉取全部卡片
             if (deletedTagIds.includes(currentTagId)) {
                 setSelectedKey('')
-                dispatch(fetchGetAllCards())
+                dispatch(fetchGetAllCards(false))
 
                 // 若没被删除则重新拉取当前标签下的卡片
             } else {
                 currentTagId
                     ? dispatch(setCards(await getCardsByTagId(currentTagId)))
-                    : dispatch(fetchGetAllCards()) // 在全部卡片下
+                    : dispatch(fetchGetAllCards(false)) // 在全部卡片下
             }
 
             // 有标签被删除时，重新拉取标签树
@@ -479,7 +443,7 @@ function SlipBox() {
                 for (let i = 0; i < cards.length; i++) {
                     const res = await getCardAPI(cards[i])
                     const card = res.data
-                    const regex = new RegExp(`/\b${tagName}\b/`)
+                    const regex = new RegExp(`\b${tagName}\b`, 'g')
                     await patchCardAPI({ id: card.id, content: card.content.replaceAll(regex, ''), tags: _.without(card.tags, tag.id) })
                 }
                 // 删除当前标签
@@ -492,13 +456,21 @@ function SlipBox() {
                         // 得到父标签
                         const res = await getTagAPI(pid)
                         const parent = res.data
-                        // 先将当前标签从父标签children属性中删除，因为获取父标签所有卡片时会遍历其所有子标签
+                        // 将当前标签从父标签children属性中删除
                         await patchTagAPI({ id: pid, children: _.without(parent.children, tag.id) })
-                        // 获取从父标签开始的当前的所有卡片
-                        const cardsFromParent = await getCardsByTagId(pid)
-                        // 统计数量
-                        const nowCardCount = _.uniq(cardsFromParent).length
-                        // 得到减少的数量
+
+                        // 递归修正父级标签的卡片计数
+                        recursiveTagParent(pid, async (tag) => {
+                            // 获取从父标签开始的当前的所有卡片
+                            const cardsFromParent = await getCardsByTagId(tag.id)
+                            // 统计数量
+                            const nowCardCount = _.uniq(cardsFromParent).length
+                            // 修正卡片计数
+                            await patchTagAPI({ id: tag.id, cardCount: nowCardCount })
+                        })
+
+
+                        /* // 得到减少的数量
                         const removedCardCount = parent.cardCount - nowCardCount
 
                         let cid
@@ -512,11 +484,11 @@ function SlipBox() {
                                 let children
                                 if (cid) {
                                     children = _.without(tag.children, cid)
+                                    cid = '' // 置为空
                                 }
                                 await patchTagAPI({ id: tag.id, children, cardCount: (tag.cardCount - removedCardCount) })
-                                cid = '' // 置为空
                             }
-                        })
+                        }) */
 
                     }
                 }
@@ -537,7 +509,7 @@ function SlipBox() {
                 // 选中改为全部卡片
                 setSelectedKey('')
                 // 拉取全部卡片
-                dispatch(fetchGetAllCards())
+                dispatch(fetchGetAllCards(false))
 
                 // 如果选中的标签是被删标签的父级标签时
             } else if (currentTagName && tagName.startsWith(currentTagName)) {
@@ -545,7 +517,136 @@ function SlipBox() {
 
                 // 如果选中的标签是全部卡片时
             } else if (!currentTagId) {
-                dispatch(fetchGetAllCards())
+                dispatch(fetchGetAllCards(false))
+            }
+
+            // 重新拉取标签
+            dispatch(fetchGetTags())
+
+        } catch (error) {
+            toast.error('移除失败，请稍后重试')
+            console.error('Error', error);
+        }
+    }
+
+    // 删除标签及其卡片
+    const handleTagDeleteOverCards = async (tagId, tagName) => {
+        try {
+
+            // 定义卡片剩余标签数组
+            const cardsLeftoverTags = []
+            // 定义可直接减少的卡片数量
+            let directlyDecreasedCardCount = 0
+
+            // 递归children
+            await recursiveTagChildren(tagId, async (tag) => {
+                const cards = tag.cards
+
+                // 1.将当前标签下的所有卡片删除，设置删除时间
+                for (let i = 0; i < cards.length; i++) {
+                    const res = await getCardAPI(cards[i])
+                    const card = res.data
+
+                    // 查询当前卡片的剩余标签
+                    const index = cardsLeftoverTags.findIndex(clt => clt.id === card.id)
+                    // 查询到则将当前标签从其当前卡片剩于标签中删除后更新到卡片剩余标签数组中
+                    if (index) {
+                        const leftoverTags = _.without(cardsLeftoverTags[index].tags, tag.id)
+                        _.pullAt(cardsLeftoverTags, index)
+                        // 剩余标签为空则不再记录
+                        leftoverTags.length ? cardsLeftoverTags.push({ id: card.id, tags: leftoverTags }) : directlyDecreasedCardCount++
+                    } else {
+                        // 没查询到则追加到卡片剩余标签数组中
+                        cardsLeftoverTags.push({ id: card.id, tags: _.without(card.tags, tag.id) })
+                    }
+
+                    // 删除当前卡片
+                    !card.del && await patchCardAPI({ id: card.id, del: true, builtOrDelTime: `删除于 ${getCurrentDateTime()}` })
+                }
+                // 删除当前标签
+                await deleteTagAPI(tag.id)
+
+                // 如果当前标签是递归回溯的根标签则将其从其父标签中删除
+                if (tag.id === tagId) {
+                    const pid = tag.parent
+                    if (pid) {
+                        // 得到父标签
+                        const res = await getTagAPI(pid)
+                        const parent = res.data
+                        // 将当前标签从父标签children属性中删除
+                        await patchTagAPI({ id: pid, children: _.without(parent.children, tag.id) })
+
+                        for (let i = 0; i < cardsLeftoverTags.length; i++) {
+                            const cardLeftoverTags = cardsLeftoverTags[i];
+                            const cardId = cardsLeftoverTags.id
+                            const tags = cardLeftoverTags.tags
+                            let noParentTag = true
+                            for (let i = 0; i < tags.length; i++) {
+                                const tagId = tags[i];
+                                const res = await getTagAPI(tagId)
+                                const tag = res.data
+
+                                // 将当前卡片从此标签的cards中移除
+                                await patchTagAPI({ id: tagId, cards: _.without(tag.cards, cardId) })
+
+                                const name = tag.tagName
+                                tagName.startsWith(name) && (noParentTag = false)
+                                noParentTag && directlyDecreasedCardCount++
+
+                                // 卡片计数-1
+                                await decreaseCardCount(tagId)
+
+                                /* let cid
+                                //从父标签开始向前遍历修改卡片计数
+                                await recursiveTagParent(tagId, (id) => decreasedTagIds.includes(id), async (tag) => {
+                                    // 卡片计数减为0则删除当前标签
+                                    if (tag.cardCount === 1) {
+                                        await deleteTagAPI(tag.id)
+                                        cid = tag.id // 保存id
+                                    } else {
+                                        let children
+                                        if (cid) {
+                                            children = _.without(tag.children, cid)
+                                            cid = '' // 置为空
+                                        }
+                                        await patchTagAPI({ id: tag.id, children, cardCount: (tag.cardCount - 1) })
+                                        decreasedTagIds.push(tag.id)
+                                    }
+                                }) */
+                            }
+                        }
+
+                        // 从父标签开始向前遍历修正卡片计数
+                        await decreaseCardCount(pid, directlyDecreasedCardCount)
+                    }
+                }
+
+            })
+
+
+            // 重新拉取卡片及标签
+            const currentTagId = _.last(pathItems).href
+            let currentTagName
+            if (currentTagId && (currentTagId !== tagId)) { // 选中的是正常标签且选中的标签没被删除
+                const res = await getTagAPI(currentTagId)
+                const currentTag = res.data
+                currentTagName = currentTag.tagName
+            }
+
+            // 如果被删标签被选中（或选中的标签是其后代标签）
+            if (currentTagId === tagId || (currentTagName && currentTagName.startsWith(tagName))) {
+                // 选中改为全部卡片
+                setSelectedKey('')
+                // 拉取全部卡片
+                dispatch(fetchGetAllCards(false))
+
+                // 如果选中的标签是被删标签的父级标签时
+            } else if (currentTagName && tagName.startsWith(currentTagName)) {
+                dispatch(setCards(await getCardsByTagId(currentTagId)))
+
+                // 如果选中的标签是全部卡片时
+            } else if (!currentTagId) {
+                dispatch(fetchGetAllCards(false))
             }
 
             // 重新拉取标签
@@ -571,7 +672,7 @@ function SlipBox() {
                 showDeleteConfirm({ title: '从卡片中移除标签', content: `从所有卡片中移除 #${tagName}`, onOk: () => handleTagDelete(tagId, tagName) })
                 break;
             case 'deleteOverCards':
-
+                showDeleteConfirm({ title: '删除标签及卡片', content: `删除标签 #${tagName} 及其所有卡片`, onOk: () => handleTagDeleteOverCards(tagId, tagName) })
                 break;
             default:
                 break;

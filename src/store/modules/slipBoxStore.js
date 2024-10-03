@@ -32,10 +32,10 @@ const slipBoxStore = createSlice({
 const { setCards, setLoadingCards, setTags, setLoadingTags } = slipBoxStore.actions
 
 // 异步获取所有cards
-function fetchGetAllCards() {
+function fetchGetAllCards(del) {
     return async (dispatch) => {
         try {
-            const res = await getAllCardsAPI()
+            const res = await getAllCardsAPI(del)
             dispatch(setCards(res.data))
             dispatch(setLoadingCards(false))
         } catch (error) {

@@ -362,9 +362,7 @@
         "updateTime": "2024-10-02 13:53",
         "words": 85
       },
-      "tags": [
-        "e856"
-      ],
+      "tags": [],
       "del": false
     },
     {
@@ -484,9 +482,7 @@
         "updateTime": "2024-10-02 14:23",
         "words": 66
       },
-      "tags": [
-        "2537"
-      ],
+      "tags": [],
       "del": false
     },
     {
@@ -498,9 +494,7 @@
         "updateTime": "2024-10-02 14:23",
         "words": 99
       },
-      "tags": [
-        "2537"
-      ],
+      "tags": [],
       "del": false
     },
     {
@@ -512,54 +506,17 @@
         "updateTime": "2024-10-02 14:23",
         "words": 131
       },
-      "tags": [
-        "9886"
-      ],
+      "tags": [],
       "del": false
     }
   ],
   "tags": [
     {
-      "id": "e856",
-      "tagName": "Java/JVM",
-      "children": [],
-      "cardCount": 1,
-      "cards": [
-        "b327"
-      ],
-      "parent": "b7af"
-    },
-    {
       "id": "b7af",
       "tagName": "Java",
-      "children": [
-        "e856",
-        "2537",
-        "9886"
-      ],
-      "cardCount": 4,
+      "children": [],
+      "cardCount": 0,
       "cards": []
-    },
-    {
-      "id": "2537",
-      "tagName": "Java/SpringBoot",
-      "children": [],
-      "cardCount": 2,
-      "cards": [
-        "c6bb",
-        "7262"
-      ],
-      "parent": "b7af"
-    },
-    {
-      "id": "9886",
-      "tagName": "Java/JUC",
-      "children": [],
-      "cardCount": 1,
-      "cards": [
-        "7751"
-      ],
-      "parent": "b7af"
     }
   ]
 }

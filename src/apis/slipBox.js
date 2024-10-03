@@ -1,11 +1,11 @@
 import request from "@/utils/request";
 
 // 获取卡片们
-export function getAllCardsAPI() {
+export function getAllCardsAPI(del) {
     /* let tid
     tagId && (tid = '<p>'.concat(tagId.concat('<p>')))
     return request.get('/cards', { params: { tags_like: tid } }) */
-    return request.get('/cards')
+    return request.get('/cards', { params: { del } })
 }
 
 // 获取卡片

@@ -460,13 +460,24 @@ function SlipBox() {
                         await patchTagAPI({ id: pid, children: _.without(parent.children, tag.id) })
 
                         // 递归修正父级标签的卡片计数
+                        let cid
                         recursiveTagParent(pid, async (tag) => {
                             // 获取从父标签开始的当前的所有卡片
                             const cardsFromParent = await getCardsByTagId(tag.id)
                             // 统计数量
                             const nowCardCount = _.uniq(cardsFromParent).length
-                            // 修正卡片计数
-                            await patchTagAPI({ id: tag.id, cardCount: nowCardCount })
+                            if (nowCardCount) {
+                                let children
+                                if (cid) {
+                                    children = _.without(tag.children, cid)
+                                    cid = ''
+                                }
+                                // 修正卡片计数
+                                await patchTagAPI({ id: tag.id, cardCount: nowCardCount, children })
+                            } else {
+                                await deleteTagAPI(tag.id)
+                                cid = tag.id
+                            }
                         })
 
 

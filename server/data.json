@@ -363,7 +363,7 @@
         "words": 85
       },
       "tags": [],
-      "del": false
+      "del": true
     },
     {
       "id": "8049",
@@ -375,7 +375,7 @@
         "words": 259
       },
       "tags": [],
-      "del": false
+      "del": true
     },
     {
       "id": "8b37",
@@ -387,7 +387,7 @@
         "words": 298
       },
       "tags": [],
-      "del": false
+      "del": true
     },
     {
       "id": "42af",
@@ -399,7 +399,7 @@
         "words": 253
       },
       "tags": [],
-      "del": false
+      "del": true
     },
     {
       "id": "c956",
@@ -411,7 +411,7 @@
         "words": 79
       },
       "tags": [],
-      "del": false
+      "del": true
     },
     {
       "id": "5286",
@@ -423,7 +423,7 @@
         "words": 404
       },
       "tags": [],
-      "del": false
+      "del": true
     },
     {
       "id": "6c0b",
@@ -435,7 +435,7 @@
         "words": 127
       },
       "tags": [],
-      "del": false
+      "del": true
     },
     {
       "id": "f304",
@@ -447,7 +447,7 @@
         "words": 142
       },
       "tags": [],
-      "del": false
+      "del": true
     },
     {
       "id": "19cf",
@@ -459,7 +459,7 @@
         "words": 146
       },
       "tags": [],
-      "del": false
+      "del": true
     },
     {
       "id": "60a5",
@@ -471,7 +471,7 @@
         "words": 169
       },
       "tags": [],
-      "del": false
+      "del": true
     },
     {
       "id": "c6bb",
@@ -483,7 +483,7 @@
         "words": 66
       },
       "tags": [],
-      "del": false
+      "del": true
     },
     {
       "id": "7262",
@@ -495,7 +495,7 @@
         "words": 99
       },
       "tags": [],
-      "del": false
+      "del": true
     },
     {
       "id": "7751",
@@ -507,16 +507,171 @@
         "words": 131
       },
       "tags": [],
-      "del": false
+      "del": true
+    },
+    {
+      "id": "9fa4",
+      "content": "<p>基于网络的应用程序采用React或Angular等技术，移动应用程序采用React Native或Flutter等技术，是构建跨平台应用程序的热门选择。对于桌面应用，Electron是一个流行的框架，它允许你用网络技术创建跨平台的桌面应用。 </p><p>#AppDev</p>",
+      "builtOrDelTime": "创建于 2024-10-12 13:17",
+      "statistics": {
+        "builtTime": "2024-10-12 13:17",
+        "updateTime": "2024-10-12 13:17",
+        "words": 129
+      },
+      "tags": [],
+      "del": true
+    },
+    {
+      "id": "1c56",
+      "content": "<p>原子类的内部是用Unsafe类实现各种原子的操作，而Unsafe结合了CAS技术，且其对对象属性值的修改需要借助该属性相对于所属对象在内存中的偏移量offset，同时由于CAS的性质，该属性需要用volatile修饰，防止JIT对其缓存优化</p><p>#Java/JUC </p>",
+      "builtOrDelTime": "删除于 2024-10-12 13:33",
+      "statistics": {
+        "builtTime": "2024-10-12 13:17",
+        "updateTime": "2024-10-12 13:17",
+        "words": 131
+      },
+      "tags": [
+        "7d80"
+      ],
+      "del": true
+    },
+    {
+      "id": "c55f",
+      "content": "<p>Java开启一个线程后，JVM会为其分配一个Java虚拟机栈，栈里面有栈帧，栈帧里面包含方法执行时的局部变量、方法参数、返回地址等</p><p>#Java/JVM</p><p>#Java/JUC</p>",
+      "builtOrDelTime": "删除于 2024-10-12 18:36",
+      "statistics": {
+        "builtTime": "2024-10-12 14:07",
+        "updateTime": "2024-10-12 14:07",
+        "words": 85
+      },
+      "tags": [
+        "cd89"
+      ],
+      "del": true
+    },
+    {
+      "id": "948b",
+      "content": "<p><strong>基于规则的优化</strong></p><ul><li>语句重写规则</li><li>IN子查询的优化如果IN子查询符合转换为semi-join的条件，查询优化器会优先把该子查询转换为semi-join，然后再考虑下边5种执行半连接的策略中哪个成本最低：Table pulloutDuplicateWeedoutLooseScanMaterializationFirstMatch选择成本最低的那种执行策略来执行子查询。如果IN子查询不符合转换为semi-join的条件，那么查询优化器会从下边两种策略中找出一种成本更低的方式执行子查询：先将子查询物化之后再执行查询执行IN to EXISTS转换</li></ul><p>#CS/MySQL/QueryOptimizing </p>",
+      "builtOrDelTime": "删除于 2024-10-12 18:34",
+      "statistics": {
+        "builtTime": "2024-10-12 16:22",
+        "updateTime": "2024-10-12 16:22",
+        "words": 298
+      },
+      "tags": [
+        "1304"
+      ],
+      "del": true
+    },
+    {
+      "id": "06b6",
+      "content": "<p>#hello/world nzjxcASD</p>",
+      "builtOrDelTime": "删除于 2024-10-12 16:23",
+      "statistics": {
+        "builtTime": "2024-10-12 16:23",
+        "updateTime": "2024-10-12 16:23",
+        "words": 21
+      },
+      "tags": [
+        "a6be"
+      ],
+      "del": true
+    },
+    {
+      "id": "1df0",
+      "content": "<p><strong>synchronized 加锁、重入、解锁过程（以轻量级锁为原点）：</strong></p><p>初始状态：加锁的方法对应的栈帧中生成一个 lock record 结构，其中第一部分记录所在 lock record 地址 & 轻量级锁编号00，第二部分记录锁对象地址</p><ul><li>加锁：读取锁对象对象头中 mark word 的值，判断是否加锁，未加锁则通过 CAS技术 交换 lock record 中记录的所在 lock record 地址 & 轻量级锁编号00，已加锁则申请 Monitor，lock record 第一部分改为该Monitor的地址&重量级锁编号10，接着系统会将锁对象的 mark word 值改为该 Monitor 的地址，修改 Monitor 中的 owner 属性的值为持有锁的线程的栈帧，多核 CPU 下当前线程会以自旋的方式尝试加锁，自旋一定次数后若仍然无法加锁则切换当前线程的上下文将其加入 entryList 阻塞</li><li>锁重入：一个线程中的其他方法若也要加相同的锁，则其栈帧仍会生成一个 lock record 结构，并检查锁对象的 mark word，发现已上锁且持有者为当前线程的其他栈帧，则将 lock record 第一部分置为 null，解锁时重置该 lock record 即可；若重入过多，则轻量级锁会被优化成偏向锁，锁对象中的 mark word 值被改写为 Biased 状态时的值，其中保存了当前线程的线程id，倒数第三位改为1表示开启偏向锁，解锁时不做任何操作，mark word值不变，线程id仍然保留（因此 “偏向”）</li><li>解锁：尝试直接交换锁对象当前 mark word 的值，交换成功则解锁成功，否则发生了锁膨胀，需进行重量级锁的解锁，即通过锁对象当前 mark word 中的Monitor地址找到 Monitor，再将 Monitor 的 owner 属性值置空，而后唤醒 entryList 中等待的线程</li></ul><p>Mark Word 有五种状态</p><p>#Java/JUC</p>",
+      "builtOrDelTime": "删除于 2024-10-12 20:38",
+      "statistics": {
+        "builtTime": "2024-10-12 20:37",
+        "updateTime": "2024-10-12 20:37",
+        "words": 842
+      },
+      "tags": [
+        "d9a9"
+      ],
+      "del": true
+    },
+    {
+      "id": "e961",
+      "content": "<p><strong>synchronized 加锁、重入、解锁过程（以轻量级锁为原点）：</strong></p><p>初始状态：加锁的方法对应的栈帧中生成一个 lock record 结构，其中第一部分记录所在 lock record 地址 & 轻量级锁编号00，第二部分记录锁对象地址</p><ul><li>加锁：读取锁对象对象头中 mark word 的值，判断是否加锁，未加锁则通过 CAS技术 交换 lock record 中记录的所在 lock record 地址 & 轻量级锁编号00，已加锁则申请 Monitor，lock record 第一部分改为该Monitor的地址&重量级锁编号10，接着系统会将锁对象的 mark word 值改为该 Monitor 的地址，修改 Monitor 中的 owner 属性的值为持有锁的线程的栈帧，多核 CPU 下当前线程会以自旋的方式尝试加锁，自旋一定次数后若仍然无法加锁则切换当前线程的上下文将其加入 entryList 阻塞</li><li>锁重入：一个线程中的其他方法若也要加相同的锁，则其栈帧仍会生成一个 lock record 结构，并检查锁对象的 mark word，发现已上锁且持有者为当前线程的其他栈帧，则将 lock record 第一部分置为 null，解锁时重置该 lock record 即可；若重入过多，则轻量级锁会被优化成偏向锁，锁对象中的 mark word 值被改写为 Biased 状态时的值，其中保存了当前线程的线程id，倒数第三位改为1表示开启偏向锁，解锁时不做任何操作，mark word值不变，线程id仍然保留（因此 “偏向”）</li><li>解锁：尝试直接交换锁对象当前 mark word 的值，交换成功则解锁成功，否则发生了锁膨胀，需进行重量级锁的解锁，即通过锁对象当前 mark word 中的Monitor地址找到 Monitor，再将 Monitor 的 owner 属性值置空，而后唤醒 entryList 中等待的线程</li></ul><p>Mark Word 有五种状态</p><p>#Java/JUC</p>",
+      "builtOrDelTime": "删除于 2024-10-12 20:44",
+      "statistics": {
+        "builtTime": "2024-10-12 20:44",
+        "updateTime": "2024-10-12 20:44",
+        "words": 842
+      },
+      "tags": [
+        "da97"
+      ],
+      "del": true
+    },
+    {
+      "id": "46bc",
+      "content": "<p><br></p><p><strong>synchronized 加锁、重入、解锁过程（以轻量级锁为原点）：</strong></p><p>初始状态：加锁的方法对应的栈帧中生成一个 lock record 结构，其中第一部分记录所在 lock record 地址 & 轻量级锁编号00，第二部分记录锁对象地址</p><ul><li>加锁：读取锁对象对象头中 mark word 的值，判断是否加锁，未加锁则通过 CAS技术 交换 lock record 中记录的所在 lock record 地址 & 轻量级锁编号00，已加锁则申请 Monitor，lock record 第一部分改为该Monitor的地址&重量级锁编号10，接着系统会将锁对象的 mark word 值改为该 Monitor 的地址，修改 Monitor 中的 owner 属性的值为持有锁的线程的栈帧，多核 CPU 下当前线程会以自旋的方式尝试加锁，自旋一定次数后若仍然无法加锁则切换当前线程的上下文将其加入 entryList 阻塞</li><li>锁重入：一个线程中的其他方法若也要加相同的锁，则其栈帧仍会生成一个 lock record 结构，并检查锁对象的 mark word，发现已上锁且持有者为当前线程的其他栈帧，则将 lock record 第一部分置为 null，解锁时重置该 lock record 即可；若重入过多，则轻量级锁会被优化成偏向锁，锁对象中的 mark word 值被改写为 Biased 状态时的值，其中保存了当前线程的线程id，倒数第三位改为1表示开启偏向锁，解锁时不做任何操作，mark word值不变，线程id仍然保留（因此 “偏向”）</li><li>解锁：尝试直接交换锁对象当前 mark word 的值，交换成功则解锁成功，否则发生了锁膨胀，需进行重量级锁的解锁，即通过锁对象当前 mark word 中的Monitor地址找到 Monitor，再将 Monitor 的 owner 属性值置空，而后唤醒 entryList 中等待的线程</li></ul><p>Mark Word 有五种状态</p><p>#Java/JUC#</p>",
+      "builtOrDelTime": "删除于 2024-10-12 20:48",
+      "statistics": {
+        "builtTime": "2024-10-12 20:48",
+        "updateTime": "2024-10-12 20:48",
+        "words": 844
+      },
+      "tags": [
+        "1e17"
+      ],
+      "del": true
+    },
+    {
+      "id": "a8c0",
+      "content": "<p><strong>synchronized 加锁、重入、解锁过程（以轻量级锁为原点）：</strong></p><p>初始状态：加锁的方法对应的栈帧中生成一个 lock record 结构，其中第一部分记录所在 lock record 地址 & 轻量级锁编号00，第二部分记录锁对象地址</p><ul><li>加锁：读取锁对象对象头中 mark word 的值，判断是否加锁，未加锁则通过 CAS技术 交换 lock record 中记录的所在 lock record 地址 & 轻量级锁编号00，已加锁则申请 Monitor，lock record 第一部分改为该Monitor的地址&重量级锁编号10，接着系统会将锁对象的 mark word 值改为该 Monitor 的地址，修改 Monitor 中的 owner 属性的值为持有锁的线程的栈帧，多核 CPU 下当前线程会以自旋的方式尝试加锁，自旋一定次数后若仍然无法加锁则切换当前线程的上下文将其加入 entryList 阻塞</li><li>锁重入：一个线程中的其他方法若也要加相同的锁，则其栈帧仍会生成一个 lock record 结构，并检查锁对象的 mark word，发现已上锁且持有者为当前线程的其他栈帧，则将 lock record 第一部分置为 null，解锁时重置该 lock record 即可；若重入过多，则轻量级锁会被优化成偏向锁，锁对象中的 mark word 值被改写为 Biased 状态时的值，其中保存了当前线程的线程id，倒数第三位改为1表示开启偏向锁，解锁时不做任何操作，mark word值不变，线程id仍然保留（因此 “偏向”）</li><li>解锁：尝试直接交换锁对象当前 mark word 的值，交换成功则解锁成功，否则发生了锁膨胀，需进行重量级锁的解锁，即通过锁对象当前 mark word 中的Monitor地址找到 Monitor，再将 Monitor 的 owner 属性值置空，而后唤醒 entryList 中等待的线程</li></ul><p>Mark Word 有五种状态</p><p>#Java/JUC</p>",
+      "builtOrDelTime": "创建于 2024-10-12 20:48",
+      "statistics": {
+        "builtTime": "2024-10-12 20:48",
+        "updateTime": "2024-10-12 20:48",
+        "words": 842
+      },
+      "tags": [],
+      "del": true
+    },
+    {
+      "id": "9cc3",
+      "content": "<p><strong>synchronized 加锁、重入、解锁过程（以轻量级锁为原点）：</strong></p><p>初始状态：加锁的方法对应的栈帧中生成一个 lock record 结构，其中第一部分记录所在 lock record 地址 & 轻量级锁编号00，第二部分记录锁对象地址</p><ul><li>加锁：读取锁对象对象头中 mark word 的值，判断是否加锁，未加锁则通过 CAS技术 交换 lock record 中记录的所在 lock record 地址 & 轻量级锁编号00，已加锁则申请 Monitor，lock record 第一部分改为该Monitor的地址&重量级锁编号10，接着系统会将锁对象的 mark word 值改为该 Monitor 的地址，修改 Monitor 中的 owner 属性的值为持有锁的线程的栈帧，多核 CPU 下当前线程会以自旋的方式尝试加锁，自旋一定次数后若仍然无法加锁则切换当前线程的上下文将其加入 entryList 阻塞</li><li>锁重入：一个线程中的其他方法若也要加相同的锁，则其栈帧仍会生成一个 lock record 结构，并检查锁对象的 mark word，发现已上锁且持有者为当前线程的其他栈帧，则将 lock record 第一部分置为 null，解锁时重置该 lock record 即可；若重入过多，则轻量级锁会被优化成偏向锁，锁对象中的 mark word 值被改写为 Biased 状态时的值，其中保存了当前线程的线程id，倒数第三位改为1表示开启偏向锁，解锁时不做任何操作，mark word值不变，线程id仍然保留（因此 “偏向”）</li><li>解锁：尝试直接交换锁对象当前 mark word 的值，交换成功则解锁成功，否则发生了锁膨胀，需进行重量级锁的解锁，即通过锁对象当前 mark word 中的Monitor地址找到 Monitor，再将 Monitor 的 owner 属性值置空，而后唤醒 entryList 中等待的线程</li></ul><p>Mark Word 有五种状态</p><p>#Java/JUC</p>",
+      "builtOrDelTime": "删除于 2024-10-12 20:51",
+      "statistics": {
+        "builtTime": "2024-10-12 20:50",
+        "updateTime": "2024-10-12 20:50",
+        "words": 842
+      },
+      "tags": [
+        "d856"
+      ],
+      "del": true
+    },
+    {
+      "id": "6cbe",
+      "content": "<p>Java开启一个线程后，JVM会为其分配一个Java虚拟机栈，栈里面有栈帧，栈帧里面包含方法执行时的局部变量、方法参数、返回地址等</p><p>#Java/JVM</p><p>#Java/JUC</p>",
+      "builtOrDelTime": "创建于 2024-10-12 22:08",
+      "statistics": {
+        "builtTime": "2024-10-12 22:08",
+        "updateTime": "2024-10-12 22:08",
+        "words": 85
+      },
+      "tags": [],
+      "del": true
+    },
+    {
+      "id": "8460",
+      "content": "<p>Java开启一个线程后，JVM会为其分配一个Java虚拟机栈，栈里面有栈帧，栈帧里面包含方法执行时的局部变量、方法参数、返回地址等</p><p>#Java/JVM</p><p>#Java/JUC</p>",
+      "builtOrDelTime": "删除于 2024-10-12 22:14",
+      "statistics": {
+        "builtTime": "2024-10-12 22:14",
+        "updateTime": "2024-10-12 22:14",
+        "words": 85
+      },
+      "tags": [
+        "8d77",
+        "b957"
+      ],
+      "del": true
     }
   ],
-  "tags": [
-    {
-      "id": "b7af",
-      "tagName": "Java",
-      "children": [],
-      "cardCount": 0,
-      "cards": []
-    }
-  ]
+  "tags": []
 }

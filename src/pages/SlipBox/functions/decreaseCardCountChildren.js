@@ -5,15 +5,21 @@ let cid
 const deletedTagIds = []
 const decreasedTagIds = []
 // 卡片计数-1的函数 
-async function decrease(id, count, stopTag) {
+async function decrease(id, count) {
     // 递归终止条件：id为空或减过
     if (!id || decreasedTagIds.includes(id)) return
 
     const res = await getTagAPI(id)
     const tag = res.data
-    const pid = tag.parent
+    const children = tag.children
 
-    // 业务逻辑
+    for (let i = 0; i < children.length; i++) {
+        const cid = children[i];
+        // 递归
+        await decrease(cid, count)
+    }
+
+    // 回溯时执行的业务逻辑
     if (tag.cardCount === count) {
         // 卡片数量只有1则删除当前标签
         await deleteTagAPI(id)
@@ -21,13 +27,6 @@ async function decrease(id, count, stopTag) {
         cid = id
         // 收集删除的tag的id
         deletedTagIds.push(id)
-
-        // 如果父标签是停止标签则将当前标签从其children属性中删除并结束递归
-        if (stopTag && (pid === stopTag.id)) {
-            await patchTagAPI({ id: pid, children: _.without(stopTag.children, id) })
-            return
-        }
-
     } else {
         // 走到这表示上一级标签是最后一个卡片数量为1的标签（或者卡片数量不止1），则本标签将cid从children属性中删除
         let children
@@ -42,13 +41,11 @@ async function decrease(id, count, stopTag) {
         decreasedTagIds.push(tag.id)
     }
 
-    // 递归
-    await decrease(pid, count, stopTag)
 }
 
-const decreaseCardCount = async (id, count = 1, stopTag) => {
-    await decrease(id, count, stopTag)
+const decreaseCardCountChildren = async (id, count = 1) => {
+    await decrease(id, count)
     return deletedTagIds
 }
 
-export default decreaseCardCount
+export default decreaseCardCountChildren

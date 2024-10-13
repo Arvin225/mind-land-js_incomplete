@@ -455,7 +455,7 @@ function SlipBox() {
             dispatch(fetchGetAllCards(false))
         } else {
             let res
-            try {
+            try { //! 这种方式出问题，可能导致请求不释放
                 // 尝试查询当前标签，报错说明当前标签被删除了
                 res = await getTagAPI(currentTagId)
             } catch (error) {
@@ -642,9 +642,9 @@ function SlipBox() {
 
                         for (let i = 0; i < cardsLeftoverTags.length; i++) {
                             const cardLeftoverTags = cardsLeftoverTags[i];
-                            const cardId = cardsLeftoverTags.id
+                            const cardId = cardLeftoverTags.id
                             const tags = cardLeftoverTags.tags
-                            let noParentTag = true
+                            // let noParentAndSiblingTag = true
                             for (let i = 0; i < tags.length; i++) {
                                 const tagId = tags[i];
                                 const res = await getTagAPI(tagId)
@@ -654,11 +654,17 @@ function SlipBox() {
                                 await patchTagAPI({ id: tagId, cards: _.without(tag.cards, cardId) })
 
                                 const name = tag.tagName
-                                tagName.startsWith(name) && (noParentTag = false)
-                                noParentTag && directlyDecreasedCardCount++
+                                const parentName = parent.tagName
+                                // 如果是兄弟或侄子标签，将其卡片计数-1，减到0则将其删除并在父标签的children中删除该标签
+                                if (name.startsWith(parentName)) {
+                                    await decreaseCardCount(tagId, 1, parent) //todo 如果兄弟标签和其子级标签同时持有卡片时又会出现同样的被删找不到的问题
 
-                                // 卡片计数-1
-                                await decreaseCardCount(tagId)
+                                    // 如果是父级标签，则不做计数操作
+                                } else if (!tagName.startsWith(name)) {
+                                    // 卡片计数-1 
+                                    await decreaseCardCount(tagId)
+                                }
+
 
                                 /* let cid
                                 //从父标签开始向前遍历修改卡片计数
@@ -667,20 +673,22 @@ function SlipBox() {
                                     if (tag.cardCount === 1) {
                                         await deleteTagAPI(tag.id)
                                         cid = tag.id // 保存id
-                                    } else {
-                                        let children
+                                        } else {
+                                            let children
                                         if (cid) {
                                             children = _.without(tag.children, cid)
                                             cid = '' // 置为空
-                                        }
-                                        await patchTagAPI({ id: tag.id, children, cardCount: (tag.cardCount - 1) })
-                                        decreasedTagIds.push(tag.id)
-                                    }
-                                }) */
+                                            }
+                                            await patchTagAPI({ id: tag.id, children, cardCount: (tag.cardCount - 1) })
+                                            decreasedTagIds.push(tag.id)
+                                            }
+                                            }) */
                             }
+                            directlyDecreasedCardCount++
+                            // noParentAndSiblingTag && directlyDecreasedCardCount++
                         }
 
-                        // 从父标签开始向前遍历修正卡片计数
+                        // 从父标签开始向前遍历修正卡片计数 
                         await decreaseCardCount(pid, directlyDecreasedCardCount)
                     }
                 }

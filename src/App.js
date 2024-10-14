@@ -16,9 +16,7 @@ function App() {
         }
       }}>
       <Provider store={store}>
-
         <div className="App">
-
           <RouterProvider router={router}></RouterProvider>
         </div>
       </Provider>

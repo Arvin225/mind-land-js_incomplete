@@ -657,12 +657,12 @@ function SlipBox() {
                                 const parentName = parent.tagName
                                 // 如果是兄弟或侄子标签，将其卡片计数-1，减到0则将其删除并在父标签的children中删除该标签
                                 if (name.startsWith(parentName)) {
-                                    await decreaseCardCount(tagId, 1, parent) //todo 如果兄弟标签和其子级标签同时持有卡片时又会出现同样的被删找不到的问题
+                                    await decreaseCardCount(tagId, 1, parent) //! 如果兄弟标签和其子级标签同时持有卡片时又会出现同样的被删找不到的问题
 
                                     // 如果是父级标签，则不做计数操作
                                 } else if (!tagName.startsWith(name)) {
                                     // 卡片计数-1 
-                                    await decreaseCardCount(tagId)
+                                    await decreaseCardCount(tagId) //! 非父级或兄弟标签同样存在找不到的问题
                                 }
 
 

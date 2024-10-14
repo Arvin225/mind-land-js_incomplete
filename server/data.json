@@ -30,7 +30,7 @@
     {
       "id": "2",
       "content": "备忘列表里的待办1",
-      "done": true,
+      "done": false,
       "star": true,
       "del": false,
       "listId": "4c66",
@@ -367,7 +367,31 @@
         "bcae"
       ],
       "del": true
+    },
+    {
+      "id": "536a",
+      "content": "<p>hi #test</p>",
+      "builtOrDelTime": "创建于 2024-10-14 18:59",
+      "statistics": {
+        "builtTime": "2024-10-14 18:59",
+        "updateTime": "2024-10-14 18:59",
+        "words": 8
+      },
+      "tags": [
+        "2001"
+      ],
+      "del": false
     }
   ],
-  "tags": []
+  "tags": [
+    {
+      "id": "2001",
+      "tagName": "test",
+      "children": [],
+      "cardCount": 1,
+      "cards": [
+        "536a"
+      ]
+    }
+  ]
 }

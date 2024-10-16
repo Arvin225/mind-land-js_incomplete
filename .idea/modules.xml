@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/mind-land.iml" filepath="$PROJECT_DIR$/.idea/mind-land.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/mind-land-js.iml" filepath="$PROJECT_DIR$/.idea/mind-land-js.iml" />
     </modules>
   </component>
 </project>
